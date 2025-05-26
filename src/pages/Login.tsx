@@ -1,9 +1,23 @@
+import React, { useState, useRef, MouseEvent } from "react";
+import { useNavigate } from 'react-router-dom';
 import "../styles/Login.css";
 import { User, Lock, X } from "lucide-react";
-import React, { useState, useRef, MouseEvent } from "react";
 import logoImg from "../assets/pwn_logo.png";
 
+
+const handleClose = async () => {
+  try {
+    await window.electronAPI?.closeApp()
+  } catch (error) {
+    console.error('Failed to close app:', error)
+    if (typeof window !== 'undefined') {
+      window.close()
+    }
+  }
+}
+
 export const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +70,9 @@ export const Login: React.FC = () => {
 
   const handleClose = () => window.electronAPI?.closeApp();
 
-  const handleSignUp = () => console.log("Navigate to sign up");
+  const handleSignUp = () => {
+    navigate('/register');
+  };
 
   return (
   

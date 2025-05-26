@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, ipcMain, BrowserWindow } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -14,7 +14,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1920,
     height: 1080,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     frame: false,
     resizable: true,
     transparent: true,
@@ -28,6 +28,9 @@ function createWindow() {
     }
   });
   win.setMenu(null);
+  if (VITE_DEV_SERVER_URL) {
+    win.webContents.openDevTools();
+  }
   win.webContents.on("did-finish-load", () => {
     win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
   });
@@ -37,6 +40,17 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
+app.whenReady().then(() => {
+  createWindow();
+  ipcMain.handle("close-app", () => {
+    app.quit();
+  });
+  ipcMain.handle("close-window", () => {
+    if (win) {
+      win.close();
+    }
+  });
+});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -48,7 +62,6 @@ app.on("activate", () => {
     createWindow();
   }
 });
-app.whenReady().then(createWindow);
 export {
   MAIN_DIST,
   RENDERER_DIST,

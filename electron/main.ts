@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -20,12 +20,12 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1920,
     height: 1080,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     frame: false,
     resizable: true,
     transparent: true,
     minimizable: true,
-    backgroundColor:'#00000000',
+    backgroundColor: '#00000000',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -35,6 +35,11 @@ function createWindow() {
   })
 
   win.setMenu(null)
+
+  
+  if (VITE_DEV_SERVER_URL) {
+    win.webContents.openDevTools()
+  }
 
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
@@ -46,6 +51,23 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 }
+
+
+app.whenReady().then(() => {
+  createWindow()
+  
+  
+  ipcMain.handle('close-app', () => {
+    app.quit()
+  })
+  
+  
+  ipcMain.handle('close-window', () => {
+    if (win) {
+      win.close()
+    }
+  })
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -59,5 +81,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-app.whenReady().then(createWindow)
