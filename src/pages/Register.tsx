@@ -1,20 +1,21 @@
-import React, { useState, useRef, MouseEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, Lock, Mail } from 'lucide-react';
-import logoImg from '../assets/pwn_logo.png';
-import '../styles/Register.css';
+import React, { useState, useRef, MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { User, Lock, Mail } from "lucide-react";
+import logoImg from "../assets/pwn_logo.png";
+import "../styles/Register.css";
+import { authAPI } from "../utils/api";
 
 const handleClose = async () => {
   try {
-    await window.electronAPI?.closeApp()
+    await window.electronAPI?.closeApp();
   } catch (error) {
-    console.error('Failed to close app:', error)
-    
-    if (typeof window !== 'undefined') {
-      window.close()
+    console.error("Failed to close app:", error);
+
+    if (typeof window !== "undefined") {
+      window.close();
     }
   }
-}
+};
 
 interface PasswordStrength {
   score: number;
@@ -26,19 +27,18 @@ interface PasswordStrength {
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    confirmPassword: ''
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     score: 0,
-    feedback: '',
-    color: '#535353',
-    width: '0%'
+    feedback: "",
+    color: "#535353",
+    width: "0%",
   });
 
-  
   const cardRef = useRef<HTMLDivElement>(null);
   const usernameWrapperRef = useRef<HTMLDivElement>(null);
   const passwordWrapperRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,6 @@ const Register: React.FC = () => {
   const buttonWrapperRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
 
-  
   const handleParallax = (e: MouseEvent<HTMLDivElement>) => {
     if (!backgroundRef.current) return;
 
@@ -57,7 +56,6 @@ const Register: React.FC = () => {
     backgroundRef.current.style.setProperty("--bg-y", `${yRatio * 40}px`);
   };
 
-  
   const handleMouseMove = (
     e: MouseEvent<HTMLDivElement>,
     ref: React.RefObject<HTMLDivElement>,
@@ -73,47 +71,44 @@ const Register: React.FC = () => {
     ref.current.style.setProperty(`--${varPrefix}-y`, `${y}px`);
   };
 
-  
   const validatePassword = (password: string): PasswordStrength => {
     let score = 0;
-    let feedback = '';
-    let color = '#535353';
-    let width = '0%';
+    let feedback = "";
+    let color = "#535353";
+    let width = "0%";
 
     if (password.length === 0) {
-      return { score: 0, feedback: '', color: '#535353', width: '0%' };
+      return { score: 0, feedback: "", color: "#535353", width: "0%" };
     }
 
-    
     if (password.length >= 8) score += 1;
     if (/[A-Z]/.test(password)) score += 1;
     if (/[a-z]/.test(password)) score += 1;
     if (/\d/.test(password)) score += 1;
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
 
-    
     switch (score) {
       case 0:
       case 1:
-        feedback = 'Weak';
-        color = '#ff4444';
-        width = '20%';
+        feedback = "Weak";
+        color = "#ff4444";
+        width = "20%";
         break;
       case 2:
-        feedback = 'Fair';
-        color = '#ffa500';
-        width = '40%';
+        feedback = "Fair";
+        color = "#ffa500";
+        width = "40%";
         break;
       case 3:
-        feedback = 'Good';
-        color = '#44FF00';
-        width = '68%';
+        feedback = "Good";
+        color = "#44FF00";
+        width = "68%";
         break;
       case 4:
       case 5:
-        feedback = 'Strong';
-        color = '#44FF00';
-        width = '100%';
+        feedback = "Strong";
+        color = "#44FF00";
+        width = "100%";
         break;
     }
 
@@ -134,9 +129,9 @@ const Register: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    if (field === 'password') {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (field === "password") {
       setPasswordStrength(validatePassword(value));
     }
   };
@@ -144,24 +139,27 @@ const Register: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid()) return;
-    
+
     setIsLoading(true);
+    // Add an error state like you have in Login.tsx
+    // const [error, setError] = useState<string | null>(null);
+    // setError(null);
 
     try {
-      console.log('Registration attempt:', formData);
-      
-      setTimeout(() => {
-        setIsLoading(false);
-        navigate('/login');
-      }, 2000);
+      // 👇 2. Replace the setTimeout with the actual API call
+      await authAPI.register(formData.username, formData.password);
+
+      // On success, navigate to the login page for the user to sign in
+      navigate("/login");
     } catch (err) {
-      console.error('Registration failed:', err);
+      console.error("Registration failed:", err);
+      // setError("Registration failed. That username might be taken."); // 👈 3. Set an error message
       setIsLoading(false);
     }
+    // No finally block needed if navigation occurs on success
   };
-
   const handleLoginClick = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleClose = () => window.electronAPI?.closeApp();
@@ -196,7 +194,9 @@ const Register: React.FC = () => {
             <div
               className="input-glow-wrapper"
               ref={usernameWrapperRef}
-              onMouseMove={(e) => handleMouseMove(e, usernameWrapperRef, "input-mouse")}
+              onMouseMove={(e) =>
+                handleMouseMove(e, usernameWrapperRef, "input-mouse")
+              }
             >
               <div className="input-wrapper">
                 <div className="input-icon">
@@ -206,16 +206,22 @@ const Register: React.FC = () => {
                   type="text"
                   placeholder="Username"
                   value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("username", e.target.value)
+                  }
                   className={`register-input ${
-                    formData.username && !validateUsername(formData.username) ? 'invalid' : ''
+                    formData.username && !validateUsername(formData.username)
+                      ? "invalid"
+                      : ""
                   }`}
                   required
                 />
               </div>
             </div>
             {formData.username && !validateUsername(formData.username) && (
-              <div className="validation-error">Username must be 3-20 alphanumeric characters</div>
+              <div className="validation-error">
+                Username must be 3-20 alphanumeric characters
+              </div>
             )}
           </div>
 
@@ -224,7 +230,9 @@ const Register: React.FC = () => {
             <div
               className="input-glow-wrapper"
               ref={passwordWrapperRef}
-              onMouseMove={(e) => handleMouseMove(e, passwordWrapperRef, "input-mouse")}
+              onMouseMove={(e) =>
+                handleMouseMove(e, passwordWrapperRef, "input-mouse")
+              }
             >
               <div className="input-wrapper">
                 <div className="input-icon">
@@ -234,7 +242,9 @@ const Register: React.FC = () => {
                   type="password"
                   placeholder="Password"
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   className="register-input"
                   required
                 />
@@ -247,7 +257,9 @@ const Register: React.FC = () => {
             <div
               className="input-glow-wrapper"
               ref={confirmPasswordWrapperRef}
-              onMouseMove={(e) => handleMouseMove(e, confirmPasswordWrapperRef, "input-mouse")}
+              onMouseMove={(e) =>
+                handleMouseMove(e, confirmPasswordWrapperRef, "input-mouse")
+              }
             >
               <div className="input-wrapper">
                 <div className="input-icon">
@@ -257,32 +269,41 @@ const Register: React.FC = () => {
                   type="password"
                   placeholder="Confirm password"
                   value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("confirmPassword", e.target.value)
+                  }
                   className={`register-input ${
-                    formData.confirmPassword && formData.password !== formData.confirmPassword ? 'invalid' : ''
+                    formData.confirmPassword &&
+                    formData.password !== formData.confirmPassword
+                      ? "invalid"
+                      : ""
                   }`}
                   required
                 />
               </div>
             </div>
-            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <div className="validation-error">Passwords do not match</div>
-            )}
+            {formData.confirmPassword &&
+              formData.password !== formData.confirmPassword && (
+                <div className="validation-error">Passwords do not match</div>
+              )}
           </div>
 
           {/* Unified Password Strength System */}
           {formData.password && (
             <div className="password-strength-section">
-              <div className="strength-feedback" style={{ color: passwordStrength.color }}>
+              <div
+                className="strength-feedback"
+                style={{ color: passwordStrength.color }}
+              >
                 {passwordStrength.feedback}
               </div>
               <div className="strength-meter">
-                <div 
+                <div
                   className="strength-fill"
                   style={{
                     width: passwordStrength.width,
                     backgroundColor: passwordStrength.color,
-                    boxShadow: `0px 0px 28px 2px ${passwordStrength.color}19`
+                    boxShadow: `0px 0px 28px 2px ${passwordStrength.color}19`,
                   }}
                 />
               </div>
@@ -294,11 +315,15 @@ const Register: React.FC = () => {
           <div
             className="button-glow-wrapper"
             ref={buttonWrapperRef}
-            onMouseMove={(e) => handleMouseMove(e, buttonWrapperRef, "button-mouse")}
+            onMouseMove={(e) =>
+              handleMouseMove(e, buttonWrapperRef, "button-mouse")
+            }
           >
             <button
               type="submit"
-              className={`register-button ${isLoading ? "loading" : ""} ${!isFormValid() ? "disabled" : ""}`}
+              className={`register-button ${isLoading ? "loading" : ""} ${
+                !isFormValid() ? "disabled" : ""
+              }`}
               disabled={isLoading || !isFormValid()}
             >
               {isLoading ? "" : "Register"}
@@ -309,7 +334,11 @@ const Register: React.FC = () => {
         {/* Unified Navigation System */}
         <div className="login-section">
           <p className="login-text">Already have an account?</p>
-          <button type="button" className="login-button-register" onClick={handleLoginClick}>
+          <button
+            type="button"
+            className="login-button-register"
+            onClick={handleLoginClick}
+          >
             Login
           </button>
         </div>

@@ -1,0 +1,65 @@
+/* src/components/chat/MessageInput.css */
+.message-input-form {
+  width: 100%;
+}
+
+.message-input-container {
+  display: flex;
+  align-items: center;
+  height: 64px; /* h-16 */
+  padding: 0 8px; /* Added some padding */
+
+  /* Styling from your Figma design */
+  background-image: linear-gradient(
+    to right,
+    #0f0f0f,
+    #101010
+  ); /* from-neutral-950 to-neutral-900 */
+  border-radius: 20px;
+  border: 0.5px solid rgba(255, 255, 255, 0.1); /* border-white/20 */
+
+  /* The animation */
+  transition: border-color 0.3s ease-in-out;
+}
+
+/* When you hover or focus inside the container, the border gets brighter */
+.message-input-container:hover,
+.message-input-container:focus-within {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.attach-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.attach-button:hover {
+  color: white;
+}
+
+.message-input-field {
+  flex-grow: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  padding: 0 16px;
+}
+
+.message-input-field:focus {
+  outline: none;
+}
+
+.message-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}

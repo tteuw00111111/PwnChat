@@ -1,0 +1,89 @@
+/* src/components/chat/ChatHeader.css */
+
+.chat-header {
+  height: 96px; /* h-24 */
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This pushes the two sides apart */
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.1); /* border-b-[0.50px] border-white/20 */
+  flex-shrink: 0; /* Prevents header from shrinking */
+}
+
+/* Left Side */
+.contact-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 56px; /* w-14 */
+  height: 56px; /* h-14 */
+  background-color: #d9d9d9; /* bg-zinc-300 */
+  border-radius: 50%;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.contact-name {
+  color: white;
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600; /* font-semibold */
+  font-family: "Inter", sans-serif;
+}
+
+/* Right Side */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Space between search and menu */
+}
+
+.search-bar {
+  width: 256px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Updated styles for the options menu in ChatHeader.css */
+
+.options-menu {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+
+  /* The transition for the animation */
+  transition: all 0.3s ease-in-out;
+}
+
+/* The hover animation: dots get brighter and scale up */
+.options-menu:hover .dot {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}

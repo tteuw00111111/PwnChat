@@ -1,0 +1,25 @@
+/* src/components/chat/ChatWindow.css */
+
+.chat-window-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* 👇 Main background from your design */
+  background: linear-gradient(
+    to bottom right,
+    #121212,
+    #0a0a0a
+  ); /* from-neutral-900 to-neutral-950 */
+}
+
+.messages-list {
+  flex-grow: 1; /* This makes the message list fill the available space */
+  padding: 24px;
+  overflow-y: auto; /* Adds a scrollbar if messages overflow */
+}
+
+.message-input-area {
+  padding: 24px;
+  flex-shrink: 0; /* Prevents this area from shrinking */
+}

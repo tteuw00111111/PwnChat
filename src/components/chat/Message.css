@@ -1,0 +1,31 @@
+/* src/components/chat/Message.css */
+.message-row {
+  display: flex;
+  margin-bottom: 12px;
+}
+.message-row.sent {
+  justify-content: flex-end;
+}
+.message-row.received {
+  justify-content: flex-start;
+}
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 60%;
+}
+
+/* Sent messages (your messages) */
+.message-row.sent .message-bubble {
+  background-color: #000000; /* Changed from blue to black */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Added a subtle border */
+  border-bottom-right-radius: 4px;
+}
+
+/* Received messages (their messages) */
+.message-row.received .message-bubble {
+  background-color: #ffffff; /* Changed from grey to white */
+  color: #121212; /* Text color changed to dark for readability */
+  border-bottom-left-radius: 4px;
+}
