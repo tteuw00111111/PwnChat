@@ -1,0 +1,75 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" version="27.0.9">
+  <diagram name="Page-1" id="oe5LRO5bL4JcyqQ9379j">
+    <mxGraphModel dx="2753" dy="4231" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-1" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;Backend Services (Node.js + Express)&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#D80073,#FF7373);fontColor=#ffffff;strokeColor=#A50040;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="35" y="-930" width="780" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="d9evLkCKwnx8YNXq6nAW-2" target="d9evLkCKwnx8YNXq6nAW-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-7" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot;&gt;&lt;b&gt;Relay Ciphertext to Peers&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="d9evLkCKwnx8YNXq6nAW-6">
+          <mxGeometry x="-0.3558" relative="1" as="geometry">
+            <mxPoint x="25" y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-2" value="&lt;b&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Socket.IO Server&lt;/font&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Receive and relays messages&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;strokeWidth=2;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="-820" width="300" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-3" value="&lt;div&gt;&lt;b&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Express API Endpoints&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;User registration, login, pre-key bundle management&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;strokeWidth=2;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="-820" width="300" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;exitX=0.431;exitY=-0.039;exitDx=0;exitDy=0;exitPerimeter=0;strokeWidth=2;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="d9evLkCKwnx8YNXq6nAW-4" target="d9evLkCKwnx8YNXq6nAW-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-12" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 8px;&quot;&gt;&lt;b&gt;Retrieve User Data, Pre-keys&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="d9evLkCKwnx8YNXq6nAW-11">
+          <mxGeometry x="0.1873" y="3" relative="1" as="geometry">
+            <mxPoint x="18" y="15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-4" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;PostgreSQL Database&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); font-size: 10px;&quot; face=&quot;Inter&quot;&gt;Stores user metada, salted-hashed passwords, pre-key bundles, audit logs&lt;/font&gt;&lt;/div&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#6a00ff;fontColor=default;strokeColor=default;sketch=1;curveFitting=1;jiggle=2;strokeWidth=2;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="108" y="-550" width="632" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.475;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;strokeWidth=2;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="d9evLkCKwnx8YNXq6nAW-3" target="d9evLkCKwnx8YNXq6nAW-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-9" value="&lt;b&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot;&gt;Read/Write User Data, Pre-keys&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="d9evLkCKwnx8YNXq6nAW-8">
+          <mxGeometry x="0.3888" y="-2" relative="1" as="geometry">
+            <mxPoint x="60" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="d9evLkCKwnx8YNXq6nAW-14" target="d9evLkCKwnx8YNXq6nAW-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="363" y="-1060" />
+              <mxPoint x="-90" y="-1060" />
+              <mxPoint x="-90" y="-715" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-18" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px;&quot;&gt;&lt;b&gt;Incoming TLS/Socket.IO&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="d9evLkCKwnx8YNXq6nAW-16">
+          <mxGeometry x="-0.151" relative="1" as="geometry">
+            <mxPoint x="116" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;strokeWidth=2;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="d9evLkCKwnx8YNXq6nAW-14" target="d9evLkCKwnx8YNXq6nAW-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="362" y="-1060" />
+              <mxPoint x="950" y="-1060" />
+              <mxPoint x="950" y="-668" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-14" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/laptop_client.svg;" vertex="1" parent="1">
+          <mxGeometry x="340" y="-1180" width="45" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d9evLkCKwnx8YNXq6nAW-19" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Inter&quot; face=&quot;Inter&quot; style=&quot;font-size: 20px;&quot;&gt;&lt;b&gt;Incoming TLS/Socket.IO&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="620" y="-1060" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

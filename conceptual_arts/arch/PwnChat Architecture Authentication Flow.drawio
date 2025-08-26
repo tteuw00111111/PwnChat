@@ -1,0 +1,86 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" version="27.0.9">
+  <diagram name="Page-1" id="jDv7eJcGkwUBS6n6NpFA">
+    <mxGraphModel dx="721" dy="813" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="i1JP5oZAXcC0laxaunI4-1" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;strokeWidth=2;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="258.5" y="407" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-2" value="" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Client_Apps.svg;" vertex="1" parent="1">
+          <mxGeometry x="454.5" y="407" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="i1JP5oZAXcC0laxaunI4-3">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="529.5" y="437" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="580.5" y="654" />
+              <mxPoint x="580.5" y="437" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-17" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Returns pre-keys to Client App.&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="i1JP5oZAXcC0laxaunI4-14">
+          <mxGeometry x="0.2835" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-3" value="" style="image;html=1;image=img/lib/clip_art/computers/Server_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="459.5" y="617.6600000000001" width="70" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-4" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg;" vertex="1" parent="1">
+          <mxGeometry x="250" y="617.6600000000001" width="46.99" height="62.66" as="geometry" />
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-5" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="299.5" y="437" as="sourcePoint" />
+            <mxPoint x="449.5" y="437" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-6" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;username/password&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="i1JP5oZAXcC0laxaunI4-5">
+          <mxGeometry x="-0.5507" y="1" relative="1" as="geometry">
+            <mxPoint x="28" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-7" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.454;entryY=-0.021;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="i1JP5oZAXcC0laxaunI4-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="489.5" y="487" as="sourcePoint" />
+            <mxPoint x="489.5" y="427" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-8" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Login Request (HTTPS)&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="i1JP5oZAXcC0laxaunI4-7">
+          <mxGeometry x="-0.3713" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-9" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="439.5" y="630.8" as="sourcePoint" />
+            <mxPoint x="309.5" y="630.8" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-10" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Verifies password&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="i1JP5oZAXcC0laxaunI4-9">
+          <mxGeometry x="0.2284" y="-2" relative="1" as="geometry">
+            <mxPoint x="18" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-11" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="309.5" y="674.34" as="sourcePoint" />
+            <mxPoint x="439.5" y="674" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="309.5" y="674.34" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-13" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Peer pre-keys&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="i1JP5oZAXcC0laxaunI4-11">
+          <mxGeometry x="-0.4718" y="-1" relative="1" as="geometry">
+            <mxPoint x="36" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i1JP5oZAXcC0laxaunI4-18" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;performs X3DH&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;enters double-ratched loop&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;established socket.io connection&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="449.5" y="350" width="140" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

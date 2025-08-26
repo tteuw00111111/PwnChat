@@ -1,205 +1,134 @@
 import express from "express";
+import http from "http";
+import { Server } from "socket.io";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import { generalLimiter } from "./middleware/security.js";
+import jwt from "jsonwebtoken";
+
+// Import your API routes
 import authRoutes from "./routes/auth.js";
 
+// --- INITIALIZATION ---
 
-console.log("🟡 Loading environment variables...");
+// Load environment variables from .env file
 dotenv.config();
-
-
-const requiredEnvVars = ["JWT_SECRET"];
-const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
-
-if (missingEnvVars.length > 0) {
-  console.error(
-    "❌ Missing required environment variables:",
-    missingEnvVars.join(", ")
-  );
-  process.exit(1);
-}
-console.log("✅ Environment variables loaded");
+console.log("✅ Environment variables loaded.");
 
 const app = express();
+const httpServer = http.createServer(app);
 const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
-console.log("🟡 Setting up Express app...");
+// This in-memory map tracks which user is connected to which socket.
+// In a production environment with multiple server instances, you would replace this
+// with a shared store like Redis.
+const userSocketMap = new Map(); // Maps -> userId: socket.id
 
+// --- SOCKET.IO SERVER SETUP ---
 
-app.set("trust proxy", 1);
-
-
-console.log("🟡 Applying security middleware...");
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'"],
-        fontSrc: ["'self'"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
-      },
-    },
-    crossOriginEmbedderPolicy: false,
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true,
-    },
-  })
-);
-
-
-console.log("🟡 Setting up CORS...");
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = process.env.FRONTEND_URL?.split(",") || [
-      "http:
-    ];
-
-    
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST"],
   },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  exposedHeaders: ["X-RateLimit-Limit", "X-RateLimit-Remaining"],
+});
+
+// --- EXPRESS MIDDLEWARE ---
+
+// Set security-related HTTP headers
+app.use(helmet());
+
+// Configure Cross-Origin Resource Sharing
+app.use(cors());
+
+// Log HTTP requests
+app.use(morgan(NODE_ENV === "development" ? "dev" : "combined"));
+
+// Parse incoming JSON payloads
+app.use(express.json({ limit: "1mb" }));
+
+// --- API ROUTES ---
+
+app.use("/api/auth", authRoutes);
+console.log("✅ API routes registered.");
+
+// --- SOCKET.IO MIDDLEWARE & EVENT HANDLING ---
+
+/**
+ * Socket.IO Authentication Middleware
+ * This is the gatekeeper for all incoming real-time connections.
+ * It runs for every new client trying to connect.
+ */
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+
+  if (!token) {
+    return next(new Error("Authentication error: Token not provided."));
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return next(new Error("Authentication error: Invalid token."));
+    }
+    // Attach the decoded user payload to the socket object for later use.
+    socket.user = decoded;
+    next();
+  });
+});
+
+/**
+ * Main Connection Handler
+ * This logic runs after a user has been successfully authenticated by the middleware.
+ */
+io.on("connection", (socket) => {
+  const userId = socket.user.userId;
+  console.log(`✅ User connected: ${socket.id}, UserID: ${userId}`);
+
+  // Track the user's socket ID.
+  userSocketMap.set(userId, socket.id);
+
+  // Handler for receiving a private message
+  socket.on("privateMessage", ({ recipientId, text }) => {
+    const recipientSocketId = userSocketMap.get(recipientId);
+
+    if (recipientSocketId) {
+      // If the recipient is online, send the message directly to their socket.
+      io.to(recipientSocketId).emit("privateMessage", {
+        text,
+        from: userId,
+      });
+    } else {
+      // If the user is offline, you could save the message to a database here.
+      console.log(`Message for offline user ${recipientId} received.`);
+    }
+  });
+
+  // Handler for when a user disconnects
+  socket.on("disconnect", () => {
+    // Remove the user from the tracking map.
+    userSocketMap.delete(userId);
+    console.log(`❌ User disconnected: ${socket.id}, UserID: ${userId}`);
+  });
+});
+
+// --- SERVER STARTUP & GRACEFUL SHUTDOWN ---
+
+httpServer.listen(PORT, () => {
+  console.log(`🚀 Server running in ${NODE_ENV} mode on port ${PORT}`);
+});
+
+const gracefulShutdown = (signal) => {
+  console.log(`\n${signal} received. Shutting down gracefully...`);
+  io.close(() => {
+    console.log("Socket.IO server closed.");
+    httpServer.close(() => {
+      console.log("HTTP server closed.");
+      process.exit(0);
+    });
+  });
 };
 
-app.use(cors(corsOptions));
-
-
-console.log("🟡 Setting up rate limiting...");
-app.use(generalLimiter);
-
-
-console.log("🟡 Setting up body parsing...");
-app.use(
-  express.json({
-    limit: "10mb",
-    strict: true,
-    type: ["application/json"],
-  })
-);
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "10mb",
-    parameterLimit: 20,
-  })
-);
-
-
-console.log("🟡 Setting up logging...");
-if (NODE_ENV === "production") {
-  app.use(morgan("combined"));
-} else {
-  app.use(morgan("dev"));
-}
-
-
-console.log("🟡 Setting up health check...");
-app.get("/health", (req, res) => {
-  console.log("✅ Health check requested");
-  res.json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: NODE_ENV,
-  });
-});
-
-app.get("/test", (req, res) => {
-  console.log("✅ Test endpoint hit");
-  res.json({ message: "Test endpoint working" });
-});
-
-
-console.log("🔗 Registering API routes...");
-app.use("/api/auth", authRoutes);
-console.log("✅ Auth routes registered at /api/auth");
-
-
-app.use("*", (req, res) => {
-  console.log(`❌ 404: ${req.method} ${req.originalUrl}`);
-  res.status(404).json({
-    success: false,
-    message: "Endpoint not found",
-  });
-});
-
-
-app.use((err, req, res, _next) => {
-  console.error("❌ Error:", {
-    message: err.message,
-    stack: NODE_ENV === "development" ? err.stack : undefined,
-    url: req.url,
-    method: req.method,
-    ip: req.ip,
-    timestamp: new Date().toISOString(),
-  });
-
-  
-  if (err.message === "Not allowed by CORS") {
-    return res.status(403).json({
-      success: false,
-      message: "CORS policy violation",
-    });
-  }
-
-  
-  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid JSON",
-    });
-  }
-
-  
-  res.status(err.status || 500).json({
-    success: false,
-    message: NODE_ENV === "production" ? "Internal server error" : err.message,
-    ...(NODE_ENV === "development" && { stack: err.stack }),
-  });
-});
-
-
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, shutting down gracefully");
-  process.exit(0);
-});
-
-process.on("SIGINT", () => {
-  console.log("SIGINT received, shutting down gracefully");
-  process.exit(0);
-});
-
-console.log("🟡 Starting server...");
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} in ${NODE_ENV} mode`);
-  console.log(`📊 Health check: http:
-  console.log(`🔗 API Base: http:
-  if (NODE_ENV === "development") {
-    console.log("📝 Available endpoints:");
-    console.log("   GET  /health");
-    console.log("   POST /api/auth/register");
-    console.log("   POST /api/auth/login");
-    console.log("   POST /api/auth/logout");
-    console.log("   GET  /api/auth/me");
-  }
-});
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));

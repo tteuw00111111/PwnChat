@@ -9,7 +9,8 @@ interface Conversation {
 
 interface ConversationListProps {
   conversations: Conversation[];
-  activeConversationId: string;
+  activeConversationId: string | null; // Allow it to be null
+  onlineUsers: Set<string>;
   onConversationClick: (id: string) => void;
 }
 

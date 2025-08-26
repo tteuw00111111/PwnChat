@@ -1,32 +1,37 @@
-// src/components/chat/ChatWindow.tsx
-import React from "react";
-import { Message } from "./Message";
+// No 'React' import needed
+import { Message as MessageComponent } from "./Message";
 import { MessageInput } from "./MessageInput";
-import { ChatHeader } from "./ChatHeader";
+import { Message } from "../../types";
 import "./ChatWindow.css";
 
 interface ChatWindowProps {
+  myUserId: string | null;
   conversationName: string;
-  messages: Array<{ id: string; sender: string; text: string }>;
+  messages: Message[];
+  onSendMessage: (text: string) => void;
 }
 
-export const ChatWindow: React.FC<ChatWindowProps> = ({
+export function ChatWindow({
+  myUserId,
   conversationName,
   messages,
-}) => {
+  onSendMessage,
+}: ChatWindowProps) {
   return (
     <div className="chat-window-container">
-      <ChatHeader contactName={conversationName} />
-
-      <div className="messages-list">
+      <header className="chat-header">
+        <h2>{conversationName}</h2>
+      </header>
+      <div className="message-list">
         {messages.map((msg) => (
-          <Message key={msg.id} sender={msg.sender} text={msg.text} />
+          <MessageComponent
+            key={msg.id}
+            text={msg.text}
+            isSentByMe={msg.senderId === myUserId}
+          />
         ))}
       </div>
-
-      <div className="message-input-area">
-        <MessageInput />
-      </div>
+      <MessageInput onSendMessage={onSendMessage} />
     </div>
   );
-};
+}

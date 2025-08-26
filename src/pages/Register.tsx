@@ -1,21 +1,10 @@
 import React, { useState, useRef, MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Lock, Mail } from "lucide-react";
+import { User, Lock } from "lucide-react";
 import logoImg from "../assets/pwn_logo.png";
 import "../styles/Register.css";
 import { authAPI } from "../utils/api";
-
-const handleClose = async () => {
-  try {
-    await window.electronAPI?.closeApp();
-  } catch (error) {
-    console.error("Failed to close app:", error);
-
-    if (typeof window !== "undefined") {
-      window.close();
-    }
-  }
-};
+import { cryptoService } from "../lib/cryptoService";
 
 interface PasswordStrength {
   score: number;
@@ -32,12 +21,14 @@ const Register: React.FC = () => {
     confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     score: 0,
     feedback: "",
     color: "#535353",
     width: "0%",
   });
+  const [error, setError] = useState<string>("");
 
   const cardRef = useRef<HTMLDivElement>(null);
   const usernameWrapperRef = useRef<HTMLDivElement>(null);
@@ -138,31 +129,58 @@ const Register: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid()) return;
+
+    // --- START: DEBUGGING LOGS ---
+    // This will print a report to your developer console.
+    console.clear(); // Clears the console for a clean view
+    console.log("--- Checking Form Validity on Click ---");
+    console.log(
+      `1. Username ('${formData.username}') is valid:`,
+      validateUsername(formData.username)
+    );
+    console.log(
+      `2. Password score is ${passwordStrength.score} (needs >= 3):`,
+      passwordStrength.score >= 3
+    );
+    console.log(
+      `3. Passwords match:`,
+      formData.password === formData.confirmPassword
+    );
+    console.log(
+      `   (Password: '${formData.password}', Confirm: '${formData.confirmPassword}')`
+    );
+    console.log("--- End of Report ---");
+    // --- END: DEBUGGING LOGS ---
+
+    if (!isFormValid()) {
+      // This message is a good fallback, but the console will tell us the real reason.
+      setError("Please fix the errors before submitting.");
+      return;
+    }
 
     setIsLoading(true);
-    // Add an error state like you have in Login.tsx
-    // const [error, setError] = useState<string | null>(null);
-    // setError(null);
+    setError("");
 
     try {
-      // 👇 2. Replace the setTimeout with the actual API call
-      await authAPI.register(formData.username, formData.password);
-
-      // On success, navigate to the login page for the user to sign in
+      const { publicBundle } = await cryptoService.generateIdentity();
+      await authAPI.register(
+        formData.username,
+        formData.password,
+        publicBundle
+      );
       navigate("/login");
     } catch (err) {
-      console.error("Registration failed:", err);
-      // setError("Registration failed. That username might be taken."); // 👈 3. Set an error message
+      if (err instanceof Error) {
+        setError(err.message);
+      }
       setIsLoading(false);
     }
-    // No finally block needed if navigation occurs on success
-  };
-  const handleLoginClick = () => {
-    navigate("/login");
   };
 
   const handleClose = () => window.electronAPI?.closeApp();
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
 
   return (
     <div className="register-container" onMouseMove={handleParallax}>
@@ -189,6 +207,15 @@ const Register: React.FC = () => {
 
         {/* Unified Form System */}
         <form className="register-form" onSubmit={handleRegister}>
+          {error && (
+            <div
+              className="validation-error"
+              style={{ textAlign: "center", marginBottom: "10px" }}
+            >
+              {error}
+            </div>
+          )}
+
           {/* Username Input */}
           <div className="input-group">
             <div

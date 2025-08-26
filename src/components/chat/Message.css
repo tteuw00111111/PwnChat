@@ -1,31 +1,41 @@
-/* src/components/chat/Message.css */
-.message-row {
+/* Main container for a message row */
+.message-container {
   display: flex;
-  margin-bottom: 12px;
+  margin: 8px 12px;
+  max-width: 75%;
 }
-.message-row.sent {
-  justify-content: flex-end;
+
+/* Styles for messages received from others */
+.message-container.received {
+  justify-content: flex-start; /* Aligns bubble to the left */
 }
-.message-row.received {
-  justify-content: flex-start;
+
+/* Styles for messages sent by you */
+.message-container.sent {
+  justify-content: flex-end; /* Aligns bubble to the right */
+  align-self: flex-end; /* Ensures container itself aligns to the right */
 }
+
+/* The chat bubble itself */
 .message-bubble {
-  padding: 12px 16px;
-  border-radius: 18px;
-  max-width: 60%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: #e5e7eb; /* Light gray text */
 }
 
-/* Sent messages (your messages) */
-.message-row.sent .message-bubble {
-  background-color: #000000; /* Changed from blue to black */
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Added a subtle border */
-  border-bottom-right-radius: 4px;
+/* Bubble color for received messages */
+.message-container.received .message-bubble {
+  background-color: #262626; /* Dark gray */
 }
 
-/* Received messages (their messages) */
-.message-row.received .message-bubble {
-  background-color: #ffffff; /* Changed from grey to white */
-  color: #121212; /* Text color changed to dark for readability */
-  border-bottom-left-radius: 4px;
+/* Bubble color for sent messages */
+.message-container.sent .message-bubble {
+  background-color: #007aff; /* A standard blue for sent messages */
+}
+
+.message-text {
+  margin: 0;
+  line-height: 1.4;
+  white-space: pre-wrap; /* Ensures long messages without spaces wrap correctly */
+  word-wrap: break-word; /* Breaks long words to prevent overflow */
 }

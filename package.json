@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@geist-ui/core": "^2.3.8",
+    "@journeyapps/sqlcipher": "^5.3.1",
     "@radix-ui/react-slot": "^1.2.3",
+    "better-sqlite3": "^12.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@types/react-router-dom": "^5.3.3",

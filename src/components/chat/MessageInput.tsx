@@ -3,13 +3,19 @@ import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import "./MessageInput.css"; // Import your custom CSS
 
-export const MessageInput: React.FC = () => {
+interface MessageInputProps {
+  onSendMessage: (text: string) => void;
+}
+
+export const MessageInput: React.FC<MessageInputProps> = ({
+  onSendMessage,
+}) => {
   const [text, setText] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
-    console.log("Sending:", text);
+    onSendMessage(text); // 3. Use the prop
     setText("");
   };
 

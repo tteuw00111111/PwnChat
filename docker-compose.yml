@@ -1,0 +1,42 @@
+# This version is standard and widely supported.
+version: "3.8"
+
+# This is where we define all the services (containers) our project needs.
+services:
+  # 'db' is the name we are giving our PostgreSQL service.
+  db:
+    # Use the official PostgreSQL image, version 15. Using a specific version is
+    # better than 'latest' for predictable results.
+    image: postgres:15
+
+    # This ensures the database container will automatically restart if it crashes
+    # or if you reboot your computer.
+    restart: always
+
+    # These are environment variables passed directly to the PostgreSQL container.
+    # The postgres image uses these to set up the database on its first run.
+    # IMPORTANT: Use the same values in your backend/.env file.
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: pwnbuffer_chat
+
+    # This maps the container's internal port 5432 to your computer's port 5432.
+    # This allows your Node.js app (running on your machine) to connect to it.
+    ports:
+      - "5432:5432"
+
+    # Volumes are for persisting data. This is the most important section.
+    volumes:
+      # This creates a persistent "volume" named 'postgres_data'. It ensures that
+      # even if you destroy the container, your database data is safe.
+      - postgres_data:/var/lib/postgresql/data
+
+      # This maps our local 'db-init' folder into a special folder inside the
+      # container. Any .sql file here will be executed automatically when the
+      # database is first created.
+      - ./db-init:/docker-entrypoint-initdb.d
+
+# This is the top-level definition for the named volume we used above.
+volumes:
+  postgres_data:

@@ -1,19 +1,22 @@
-// src/components/chat/Message.tsx
-import React from "react";
-import "./Message.css"; // We'll create this CSS file
+import "./Message.css"; // Make sure to import the stylesheet
 
+// Define the component's props interface
 interface MessageProps {
-  sender: string;
   text: string;
+  isSentByMe: boolean; // The new prop to determine styling
 }
 
-export const Message: React.FC<MessageProps> = ({ sender, text }) => {
-  // This logic changes the style if the message is from "You"
-  const isMe = sender === "You";
+export function Message({ text, isSentByMe }: MessageProps) {
+  // Determine the CSS classes to apply based on who sent the message.
+  const containerClasses = `message-container ${
+    isSentByMe ? "sent" : "received"
+  }`;
 
   return (
-    <div className={`message-row ${isMe ? "sent" : "received"}`}>
-      <div className="message-bubble">{text}</div>
+    <div className={containerClasses}>
+      <div className="message-bubble">
+        <p className="message-text">{text}</p>
+      </div>
     </div>
   );
-};
+}

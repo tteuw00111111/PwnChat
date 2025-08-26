@@ -49,22 +49,30 @@ export const Login: React.FC = () => {
     setError("");
 
     try {
+      // This function should return the full response from your API
       const result = await authAPI.login(username, password);
 
-      if (result.success) {
-        console.log("Login successful:", result.user);
-        navigate("/dashboard"); // Change this to your main app route
+      // The API sends back a 'token' on success
+      if (result.token) {
+        console.log("Login successful. Token received.");
+        // 1. Save the token to localStorage
+        localStorage.setItem("jwt_token", result.token);
+
+        // 2. Navigate to the chat page
+        navigate("/chat");
       } else {
+        // Handle cases where the API call succeeded but login failed (e.g., wrong password)
         setError(result.message || "Login failed");
+        setIsLoading(false);
       }
     } catch (err) {
       console.error("Login failed:", err);
       setError(
         err instanceof Error ? err.message : "Login failed. Please try again."
       );
-    } finally {
       setIsLoading(false);
     }
+    // No 'finally' block needed, as loading is set to false on both error paths
   };
 
   const handleClose = async () => {

@@ -1,27 +1,22 @@
-/// <reference types="vite-plugin-electron/electron-env" />
+import { IElectronAPI, ICryptoAPI } from "./preload";
 
-declare namespace NodeJS {
-  interface ProcessEnv {
-    /**
-     * The built directory structure
-     *
-     * ```tree
-     * ├─┬─┬ dist
-     * │ │ └── index.html
-     * │ │
-     * │ ├─┬ dist-electron
-     * │ │ ├── main.js
-     * │ │ └── preload.js
-     * │
-     * ```
-     */
-    APP_ROOT: string
-    /** /dist/ or /public/ */
-    VITE_PUBLIC: string
+declare global {
+  // We are extending the existing Window interface
+  interface Window {
+    ipcRenderer: import("electron").IpcRenderer;
+    electronAPI: IElectronAPI;
+    electronCrypto: ICryptoAPI;
+  }
+
+  // We are extending the existing NodeJS.ProcessEnv interface
+  namespace NodeJS {
+    interface ProcessEnv {
+      APP_ROOT: string;
+      VITE_PUBLIC: string;
+    }
   }
 }
 
-// Used in Renderer process, expose in `preload.ts`
-interface Window {
-  ipcRenderer: import('electron').IpcRenderer
-}
+// This export is here to ensure this file is treated as a module.
+// It can be an empty export.
+export {};

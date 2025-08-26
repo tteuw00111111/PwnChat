@@ -1,35 +1,42 @@
-const API_BASE_URL = "http://localhost:3001/api";
+const BASE_URL = "http://localhost:3001/api";
+
+const request = async (endpoint: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem("jwt_token");
+  const headers = {
+    "Content-Type": "application/json",
+    ...options.headers,
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "An API error occurred");
+  }
+  return response.json();
+};
 
 export const authAPI = {
-  login: async (username: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  login: (username: string, password: string) => {
+    return request("/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ username, password }),
     });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
   },
 
-  register: async (username: string, password: string, email?: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+  // FIX: Update register to accept the public key bundle
+  register: (username: string, password: string, publicKeyBundle: object) => {
+    return request("/auth/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password, email }),
+      body: JSON.stringify({ username, password, publicKeyBundle }),
     });
+  },
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
+  // FIX: Add the new getUsers function
+  getUsers: () => {
+    return request("/users");
   },
 };
