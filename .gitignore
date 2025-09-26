@@ -48,3 +48,5 @@ Thumbs.db
 *.sqlite3
 
 *.log
+devtool-logs/
+dist-electron/

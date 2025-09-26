@@ -1,7 +1,8 @@
 // src/components/chat/MessageInput.tsx
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import "./MessageInput.css"; // Import your custom CSS
+import { HiOutlinePaperAirplane } from "react-icons/hi2";
+import "./MessageInput.css";
 
 interface MessageInputProps {
   onSendMessage: (text: string) => void;
@@ -15,7 +16,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
-    onSendMessage(text); // 3. Use the prop
+    onSendMessage(text);
     setText("");
   };
 
@@ -36,6 +37,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+        <button type="submit" className="send-button" aria-label="Send message">
+          <HiOutlinePaperAirplane size={18} className="send-icon" />
+        </button>
       </div>
     </form>
   );

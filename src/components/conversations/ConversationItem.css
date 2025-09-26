@@ -1,34 +1,37 @@
 .conversation-item {
   display: flex;
   align-items: center;
-  padding: 12px;
-  height: 65px;
+  padding: 10px 12px; /* Adjusted padding */
+  height: 60px; /* Slightly reduced height */
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 120ms ease;
+  margin-bottom: 4px; /* Space between items */
+  will-change: transform;
 }
 
-.conversation-item:hover {
-  background-color: rgba(64, 64, 64, 0.5);
-}
+.conversation-item:hover { background-color: rgba(255, 255, 255, 0.08); }
+.conversation-item:active { transform: scale(0.99); }
 
 /* Style for the active/clicked-on conversation */
 .conversation-item.active {
-  background-color: rgba(33, 33, 33, 0.49); /* bg-[#2121217d] */
+  background: rgba(255, 255, 255, 0.15); /* More prominent active state */
 }
 
 .avatar-placeholder {
-  width: 42px;
-  height: 42px;
+  width: 40px; /* Slightly smaller avatar */
+  height: 40px;
   border-radius: 50%;
-  background-color: #d9d9d9;
-  margin-right: 16px; /* Creates space between avatar and name */
-  flex-shrink: 0; /* Prevents the avatar from shrinking */
+  background: linear-gradient(180deg, #2a2a2a, #1f1f1f); /* Keep existing gradient */
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-right: 12px; /* Adjusted space */
+  flex-shrink: 0;
 }
 
 .conversation-name {
-  color: white;
+  color: #e0e0e0; /* Light gray for text */
   font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.95rem; /* Slightly smaller font */
+  text-shadow: none; /* Remove text shadow */
 }

@@ -1,6 +1,8 @@
+// backend/middleware/auth_middleware.js
 import { verifyToken } from "../utils/jwt.js";
 
-export const authenticate = (req, res, next) => {
+export const authenticateToken = (req, res, next) => {
+  // 👈 Renamed this function
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {

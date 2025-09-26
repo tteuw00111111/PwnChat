@@ -1,43 +1,241 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "com.brucewayne.pwnchat",
+  "productName": "PwnChat",
+  "copyright": "Copyright © 2024 Bruce Wayne. All rights reserved.",
+  "description": "Secure end-to-end encrypted messaging application with Signal Protocol",
+  "author": {
+    "name": "Bruce Wayne",
+    "email": "bruce@wayne-enterprises.com",
+    "url": "https://bruce-wayne.dev"
+  },
+  "homepage": "https://github.com/brucewayne/pwnchat-project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brucewayne/pwnchat-project.git"
+  },
+  "keywords": ["secure", "messaging", "encryption", "signal-protocol", "e2e", "privacy"],
+
+  // Application Configuration
   "asar": true,
-  "productName": "YourAppName",
+  "asarUnpack": [
+    "native/signal/build/Release/*.node",
+    "native/signal/build/Release/**/*.node"
+  ],
+  "compression": "maximum",
   "directories": {
     "output": "release/${version}"
   },
+
+  // Files to include in distribution
   "files": [
-    "dist",
-    "dist-electron"
+    "dist/**/*",
+    "dist-electron/**/*",
+    "native/signal/build/Release/**",
+    {
+      "from": "node_modules",
+      "filter": [
+        "sqlite3/**",
+        "better-sqlite3/**",
+        "argon2/**"
+      ]
+    }
   ],
+
+  // Extra resources
+  "extraResources": [
+    {
+      "from": "native/signal/build/Release",
+      "to": "native",
+      "filter": ["*.node"]
+    }
+  ],
+
+  // macOS Configuration
   "mac": {
+    "category": "public.app-category.social-networking",
     "target": [
-      "dmg"
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "arm64"]
+      }
     ],
-    "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
+    "icon": "build/icons/icon.icns",
+    "darkModeSupport": true,
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "build/entitlements.mac.plist",
+    "entitlementsInherit": "build/entitlements.mac.plist",
+    "artifactName": "${productName}-${version}-macOS-${arch}.${ext}",
+    "minimumSystemVersion": "10.15.0"
   },
+
+  // macOS DMG Configuration
+  "dmg": {
+    "title": "${productName} ${version}",
+    "icon": "build/icons/icon.icns",
+    "background": "build/dmg-background.png",
+    "contents": [
+      {
+        "x": 410,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      },
+      {
+        "x": 130,
+        "y": 150,
+        "type": "file"
+      }
+    ],
+    "window": {
+      "width": 540,
+      "height": 380
+    }
+  },
+
+  // Windows Configuration
   "win": {
     "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64", "ia32"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      },
+      {
+        "target": "msi",
+        "arch": ["x64"]
       }
     ],
-    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
+    "icon": "build/icons/icon.ico",
+    "publisherName": "Bruce Wayne",
+    "verifyUpdateCodeSignature": false,
+    "artifactName": "${productName}-${version}-Windows-${arch}-Setup.${ext}",
+    "requestedExecutionLevel": "asInvoker"
   },
+
+  // NSIS Installer Configuration
   "nsis": {
     "oneClick": false,
     "perMachine": false,
+    "allowElevation": true,
     "allowToChangeInstallationDirectory": true,
-    "deleteAppDataOnUninstall": false
+    "installerIcon": "build/icons/icon.ico",
+    "uninstallerIcon": "build/icons/icon.ico",
+    "installerHeader": "build/installerHeader.bmp",
+    "installerSidebar": "build/installerSidebar.bmp",
+    "deleteAppDataOnUninstall": false,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "PwnChat",
+    "include": "build/installer.nsh"
   },
+
+  // MSI Configuration
+  "msi": {
+    "oneClick": false,
+    "perMachine": false,
+    "runAfterFinish": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  },
+
+  // Linux Configuration
   "linux": {
     "target": [
-      "AppImage"
+      {
+        "target": "AppImage",
+        "arch": ["x64"]
+      },
+      {
+        "target": "snap",
+        "arch": ["x64"]
+      },
+      {
+        "target": "deb",
+        "arch": ["x64"]
+      },
+      {
+        "target": "rpm",
+        "arch": ["x64"]
+      },
+      {
+        "target": "tar.gz",
+        "arch": ["x64"]
+      }
     ],
-    "artifactName": "${productName}-Linux-${version}.${ext}"
-  }
+    "category": "Network;InstantMessaging;",
+    "icon": "build/icons/icon.png",
+    "desktop": {
+      "Name": "PwnChat",
+      "Comment": "Secure encrypted messaging",
+      "Keywords": "secure;messaging;encryption;chat;privacy;",
+      "StartupWMClass": "pwnchat"
+    },
+    "artifactName": "${productName}-${version}-Linux-${arch}.${ext}",
+    "synopsis": "Secure end-to-end encrypted messaging application"
+  },
+
+  // AppImage Configuration
+  "appImage": {
+    "license": "LICENSE"
+  },
+
+  // Snap Configuration
+  "snap": {
+    "synopsis": "Secure encrypted messaging application",
+    "description": "PwnChat is a desktop messaging application that prioritizes security and privacy. Built with Signal Protocol encryption for end-to-end encrypted communication.",
+    "category": "network",
+    "environment": {
+      "TMPDIR": "$XDG_RUNTIME_DIR"
+    }
+  },
+
+  // Debian Package Configuration
+  "deb": {
+    "synopsis": "Secure encrypted messaging application",
+    "description": "PwnChat provides military-grade end-to-end encryption for private communication. Features Signal Protocol implementation with X3DH key agreement and Double Ratchet encryption.",
+    "category": "net",
+    "priority": "optional",
+    "depends": ["libgtk-3-0", "libnotify4", "libnss3", "libxss1", "libxtst6", "xdg-utils", "libatspi2.0-0", "libuuid1", "libsecret-1-0"]
+  },
+
+  // RPM Package Configuration
+  "rpm": {
+    "synopsis": "Secure encrypted messaging application",
+    "description": "PwnChat provides military-grade end-to-end encryption for private communication. Features Signal Protocol implementation with X3DH key agreement and Double Ratchet encryption.",
+    "category": "Applications/Internet",
+    "requires": ["gtk3", "libnotify", "nss", "libXScrnSaver", "libXtst", "xdg-utils", "at-spi2-atk", "libuuid", "libsecret"]
+  },
+
+  // Auto Updater Configuration
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "brucewayne",
+      "repo": "pwnchat-project",
+      "releaseType": "release"
+    }
+  ],
+
+  // Build Configuration
+  "buildVersion": "1.0.0",
+  "electronVersion": "30.5.1",
+
+  // Protocol Association
+  "protocols": [
+    {
+      "name": "pwnchat",
+      "schemes": ["pwnchat"],
+      "role": "Editor"
+    }
+  ]
 }

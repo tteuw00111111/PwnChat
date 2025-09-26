@@ -1,0 +1,10 @@
+.no-conversation-selected {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  color: rgba(255,255,255,0.2) !important; /* Darker, softer text */
+  font-size: 1.5em;
+  text-align: center;
+}
+.no-conversation-selected h2,
+.no-conversation-selected * { color: rgba(255,255,255,0.2) !important; font-weight: 500; }

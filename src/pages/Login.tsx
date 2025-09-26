@@ -1,211 +1,154 @@
-import React, { useState, useRef, MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
-import { User, Lock } from "lucide-react";
-import logoImg from "../assets/pwn_logo.png";
-import { authAPI } from "../utils/api";
+import { FiUser, FiLock } from "react-icons/fi";
+import logoPng from "../assets/pwn_logo.png";
+import { ACCESS_TOKEN_KEY, authAPI } from "../utils/api";
+import { jwtDecode } from "jwt-decode";
 
-export const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>("");
+export default function Login() {
+  const nav = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const cardRef = useRef<HTMLDivElement>(null);
-  const usernameWrapperRef = useRef<HTMLDivElement>(null);
-  const passwordWrapperRef = useRef<HTMLDivElement>(null);
-  const buttonWrapperRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
+  // UI state (kept exactly like your original)
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleParallax = (e: MouseEvent<HTMLDivElement>) => {
-    if (!backgroundRef.current) return;
+  // Parallax Effect Logic (rAF-throttled for perf)
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let raf = 0;
+    const onMouseMove = (e: MouseEvent) => {
+      if (raf) return; // throttle to next frame
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        const mouseX = (clientX / innerWidth - 0.5) * 18; // reduced amplitude
+        const mouseY = (clientY / innerHeight - 0.5) * 18;
+        container.style.setProperty("--mouse-x", `${-mouseX}px`);
+        container.style.setProperty("--mouse-y", `${-mouseY}px`);
+      });
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
 
-    const xRatio = e.clientX / window.innerWidth - 0.5;
-    const yRatio = e.clientY / window.innerHeight - 0.5;
-
-    backgroundRef.current.style.setProperty("--bg-x", `${xRatio * 40}px`);
-    backgroundRef.current.style.setProperty("--bg-y", `${yRatio * 40}px`);
-  };
-
-  const handleMouseMove = (
-    e: MouseEvent<HTMLDivElement>,
-    ref: React.RefObject<HTMLDivElement>,
-    varPrefix: string
-  ) => {
-    if (!ref.current) return;
-
-    const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    ref.current.style.setProperty(`--${varPrefix}-x`, `${x}px`);
-    ref.current.style.setProperty(`--${varPrefix}-y`, `${y}px`);
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
+  // Submit handler bound to the form (fixes the prior type/exports issues)
+  async function handleLoginSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    setError(null);
+    setLoading(true);
 
     try {
-      // This function should return the full response from your API
-      const result = await authAPI.login(username, password);
+      // 1) Authenticate
+      const data = await authAPI.login({ username: user, password: pass });
+      const token = (data as any).accessToken || (data as any).token;
+      if (!token) throw new Error("Login succeeded but no token returned");
 
-      // The API sends back a 'token' on success
-      if (result.token) {
-        console.log("Login successful. Token received.");
-        // 1. Save the token to localStorage
-        localStorage.setItem("jwt_token", result.token);
+      // 2) Persist token so api.ts attaches it to future calls
+      localStorage.setItem(ACCESS_TOKEN_KEY, token);
 
-        // 2. Navigate to the chat page
-        navigate("/chat");
-      } else {
-        // Handle cases where the API call succeeded but login failed (e.g., wrong password)
-        setError(result.message || "Login failed");
-        setIsLoading(false);
+      // 3) Unlock local DB using an account-scoped key (prefer userId from token)
+      try {
+        const decoded: any = jwtDecode(token);
+        const accountKey = decoded?.userId || user;
+        await (window as any).electronAPI?.unlockDB?.(pass, accountKey);
+      } catch {
+        // non-fatal during login
       }
-    } catch (err) {
-      console.error("Login failed:", err);
-      setError(
-        err instanceof Error ? err.message : "Login failed. Please try again."
-      );
-      setIsLoading(false);
-    }
-    // No 'finally' block needed, as loading is set to false on both error paths
-  };
 
-  const handleClose = async () => {
-    try {
-      await window.electronAPI?.closeApp();
-    } catch (error) {
-      console.error("Failed to close app:", error);
-      if (typeof window !== "undefined") {
-        window.close();
-      }
+      // 4) Go to chat
+      nav("/chat");
+    } catch (err: any) {
+      const msg = err?.response?.data ?? err?.message ?? "Login failed";
+      setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleSignUp = () => {
-    navigate("/register");
-  };
+  }
 
   return (
-    <div className="login-container" onMouseMove={handleParallax}>
-      <div className="login-background" ref={backgroundRef}>
-        <div className="background-overlay" />
+    <div className="auth-container" ref={containerRef}>
+      <div className="window-controls-auth">
+        <button
+          className="window-control minimize"
+          onClick={() => window.electronAPI?.minimizeWindow?.()}
+          title="Minimize"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <rect x="2" y="5" width="8" height="2" fill="currentColor" />
+          </svg>
+        </button>
+        <button
+          className="window-control maximize"
+          onClick={() => window.electronAPI?.maximizeWindow?.()}
+          title="Maximize"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <rect x="2" y="2" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
+        </button>
+        <button
+          className="window-control close"
+          onClick={() => window.electronAPI?.closeWindow?.()}
+          title="Close"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
       </div>
-
-      <button className="close-button" onClick={handleClose}>
-        ×
-      </button>
-
-      <div
-        className="login-card"
-        ref={cardRef}
-        onMouseMove={(e) => handleMouseMove(e, cardRef, "mouse")}
-      >
-        <div className="logo-section">
-          <div className="logo-icon">
-            <img src={logoImg} alt="pwnbuffer logo" width="32" height="32" />
-          </div>
-          <h1 className="logo">pwnbuffer.org</h1>
+      <div className="background-layer" />
+      <div className="auth-card">
+        <div className="brand">
+          <img src={logoPng} alt="logo" className="logo-icon" />
+          <h1 className="logo-text">PWNCHAT</h1>
         </div>
-
-        <form className="login-form" onSubmit={handleLogin}>
-          {error && (
-            <div
-              className="error-message"
-              style={{
-                color: "#ff4444",
-                textAlign: "center",
-                marginBottom: "1rem",
-                padding: "0.5rem",
-                borderRadius: "4px",
-                backgroundColor: "rgba(255, 68, 68, 0.1)",
-                border: "1px solid rgba(255, 68, 68, 0.2)",
-              }}
-            >
-              {error}
-            </div>
-          )}
-
+        <form className="auth-form" onSubmit={handleLoginSubmit}>
+          {error && <p className="auth-error">{String(error)}</p>}
           <div className="input-group">
-            <div
-              className="input-glow-wrapper"
-              ref={usernameWrapperRef}
-              onMouseMove={(e) =>
-                handleMouseMove(e, usernameWrapperRef, "input-mouse")
-              }
-            >
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <User size={16} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="login-input"
-                  required
-                />
-              </div>
+            <label className="input-label">Username</label>
+            <div className="input-wrapper">
+              <FiUser className="input-icon" />
+              <input
+                className="auth-input"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+                disabled={loading}
+              />
             </div>
           </div>
-
           <div className="input-group">
-            <div
-              className="input-glow-wrapper"
-              ref={passwordWrapperRef}
-              onMouseMove={(e) =>
-                handleMouseMove(e, passwordWrapperRef, "input-mouse")
-              }
-            >
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <Lock size={16} />
-                </div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="login-input"
-                  required
-                />
-              </div>
+            <label className="input-label">Password</label>
+            <div className="input-wrapper">
+              <FiLock className="input-icon" />
+              <input
+                type="password"
+                className="auth-input"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                disabled={loading}
+              />
             </div>
           </div>
-
-          <div
-            className="button-glow-wrapper"
-            ref={buttonWrapperRef}
-            onMouseMove={(e) =>
-              handleMouseMove(e, buttonWrapperRef, "button-mouse")
-            }
-          >
-            <button
-              type="submit"
-              className={`login-button ${isLoading ? "loading" : ""}`}
-              disabled={isLoading}
-            >
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
-          </div>
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? "Signing in…" : "Login"}
+          </button>
         </form>
-
-        <div className="signup-section">
-          <p className="signup-text">Don't have an account?</p>
-          <button
-            type="button"
-            className="signup-button"
-            onClick={handleSignUp}
-          >
+        <div className="link-section">
+          <p className="link-text">Don't have an account?</p>
+          <button className="link-button" onClick={() => nav("/register")}>
             Sign Up
           </button>
         </div>
       </div>
     </div>
   );
-};
+}

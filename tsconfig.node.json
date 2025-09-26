@@ -1,11 +1,24 @@
+// tsconfig.node.json
+
 {
   "compilerOptions": {
     "composite": true,
     "skipLibCheck": true,
-    "module": "ESNext",
+    "target": "ES2022", // 👈 THE FINAL FIX
+    "module": "CommonJS", // 👈 THE FIX
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    "jsx": "react-jsx",
+
+    /* Node types para processos de build/electron */
+    "types": ["node"]
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "src",
+    "electron",
+    "vite.config.ts",
+    "vite-env.d.ts",
+    "electron-builder.json5"
+  ]
 }

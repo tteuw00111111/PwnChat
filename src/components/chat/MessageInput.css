@@ -1,31 +1,67 @@
 /* src/components/chat/MessageInput.css */
 .message-input-form {
   width: 100%;
+  margin: 0 0 16px 0;
+  padding: 12px 16px;         /* horizontal inset lives here */
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .message-input-container {
   display: flex;
   align-items: center;
-  height: 64px; /* h-16 */
-  padding: 0 8px; /* Added some padding */
+  height: 52px;
+  padding: 0 12px;
+  width: 100%;
+  box-sizing: border-box;
 
-  /* Styling from your Figma design */
-  background-image: linear-gradient(
-    to right,
-    #0f0f0f,
-    #101010
-  ); /* from-neutral-950 to-neutral-900 */
-  border-radius: 20px;
-  border: 0.5px solid rgba(255, 255, 255, 0.1); /* border-white/20 */
+  /* Enhanced glassy input with black gradient base */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%),
+    linear-gradient(6deg, #050505 0%, #0a0a0a 100%),
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.02), transparent 50%);
+  backdrop-filter: blur(30px) saturate(1.3);
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
-  /* The animation */
-  transition: border-color 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+
+  /* Enhanced shadow with depth */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
-/* When you hover or focus inside the container, the border gets brighter */
+/* Add shine effect */
+.message-input-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+/* Enhanced hover and focus effects */
 .message-input-container:hover,
 .message-input-container:focus-within {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%),
+    linear-gradient(6deg, #050505 0%, #0a0a0a 100%),
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.03), transparent 50%);
+  backdrop-filter: blur(35px) saturate(1.4);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.01);
 }
 
 .attach-button {
@@ -51,9 +87,10 @@
   height: 100%;
   background: transparent;
   border: none;
-  color: white;
+  color: #e0e0e0; /* Light gray for text */
   font-size: 1rem;
   padding: 0 16px;
+  caret-color: #ffffff;
 }
 
 .message-input-field:focus {
@@ -61,5 +98,58 @@
 }
 
 .message-input-field::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.3); /* Slightly darker placeholder */
+}
+
+.send-button {
+  /* Enhanced dark themed send button with black gradient */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%),
+    linear-gradient(6deg, #0a0a0a 0%, #050505 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05), transparent 50%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  margin-left: 8px;
+  backdrop-filter: blur(10px);
+  /* Enhanced shadow effect */
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 1px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.send-button:hover {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%),
+    linear-gradient(6deg, #0a0a0a 0%, #050505 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.08), transparent 50%);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08) translateY(-1px);
+  backdrop-filter: blur(15px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.send-button:active {
+  transform: scale(0.95);
+}
+
+.send-icon { transform: rotate(-12deg); }
+
+/* Responsive: tighter insets on small screens */
+@media (max-width: 600px) {
+  .message-input-form { margin: 0 0 12px 0; }
 }

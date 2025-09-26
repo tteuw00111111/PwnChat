@@ -1,79 +1,38 @@
 .conversation-list {
-  width: 491px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(6deg, #0c0c0c 0%, #121212 100%);
-}
-
-.list-header {
-  height: 96px;
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
-}
-
-.menu-button {
-  background: none;
-  border: none;
-  width: 50px;
-  height: 25px;
-  cursor: pointer;
-  padding: 0;
-  position: relative;
-}
-
-.menu-bar {
-  width: 100%;
-  height: 5px;
-  border-radius: 50px;
-  position: absolute;
-  left: 0;
-
-  background: linear-gradient(to right, #0f0f0f, #101010);
-
-  border: 0.5px solid rgba(255, 255, 255, 0.1);
-  transition: border-color 0.3s ease-in-out;
-}
-
-.menu-button:hover .menu-bar {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.search-bar {
-  flex-grow: 1;
-  margin-left: 24px;
-  height: 32px;
-  max-width: 384px;
-  border-radius: 30px;
-
-  background-image: linear-gradient(to right, #0f0f0f, #101010);
-  border: 0.5px solid rgba(255, 255, 255, 0.1);
-  transition: border-color 0.3s ease-in-out;
-}
-
-.search-bar:hover,
-.search-bar:focus-within {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-.search-input {
   width: 100%;
   height: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 0 16px;
-  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(6deg, #050505 0%, #0a0a0a 100%);
 }
 
-.search-input::placeholder {
-  color: rgba(255, 255, 255, 0.1);
-}
+/* Header with search was removed to keep a single global search in the sidebar */
 
 .items-container {
-  flex-grow: 1;
+  flex: 1;
+  min-height: 0; /* allow to shrink within parent */
   overflow-y: auto;
+  overflow-x: hidden; /* prevent horizontal overflow */
   padding: 8px;
+  max-height: 100%; /* ensure it doesn't exceed container */
+}
+
+/* Polished scrollbar */
+.items-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.items-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.items-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08));
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.items-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.16));
 }

@@ -4,21 +4,153 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  /* 👇 Main background from your design */
-  background: linear-gradient(
-    to bottom right,
-    #121212,
-    #0a0a0a
-  ); /* from-neutral-900 to-neutral-950 */
+  overflow: hidden;
+  /* Enhanced glassy background with black gradient base */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 50%, rgba(255, 255, 255, 0.02) 100%),
+    linear-gradient(6deg, #050505 0%, #0a0a0a 100%),
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.01), transparent 50%);
+  backdrop-filter: blur(25px) saturate(1.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  animation: fadeIn 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Add subtle glass shine effect */
+.chat-window-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  z-index: 1;
 }
 
 .messages-list {
-  flex-grow: 1; /* This makes the message list fill the available space */
-  padding: 24px;
-  overflow-y: auto; /* Adds a scrollbar if messages overflow */
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 32px 24px 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  /* Enhanced scrollbar with smooth transitions */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  transition: padding 0.3s ease;
+}
+
+/* Webkit scrollbar styling for Apple-like appearance */
+.messages-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.messages-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: content-box;
+}
+
+.load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 24px;
+  margin-bottom: 12px;
+  /* Glassy button design with dark base */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.load-more::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.load-more:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.load-more:hover::before {
+  left: 100%;
+}
+
+.load-more:active {
+  transform: translateY(0);
 }
 
 .message-input-area {
-  padding: 24px;
-  flex-shrink: 0; /* Prevents this area from shrinking */
+  padding: 24px 24px 32px;
+  flex-shrink: 0;
+  /* Enhanced glassy bottom section with black base */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%),
+    rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(25px) saturate(1.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.message-input-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    backdrop-filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    backdrop-filter: blur(25px);
+  }
+}
+
+/* Smooth hover effects */
+.chat-window-container:hover {
+  backdrop-filter: blur(30px) saturate(1.3);
+  border-left-color: rgba(255, 255, 255, 0.1);
 }

@@ -1,370 +1,318 @@
-import React, { useState, useRef, MouseEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Lock } from "lucide-react";
-import logoImg from "../assets/pwn_logo.png";
-import "../styles/Register.css";
 import { authAPI } from "../utils/api";
+
+import { useEffect, useMemo, useRef } from "react";
+import "../styles/Register.css";
+import { FiUser, FiLock } from "react-icons/fi";
+import logoPng from "../assets/pwn_logo.png";
 import { cryptoService } from "../lib/cryptoService";
 
-interface PasswordStrength {
-  score: number;
-  feedback: string;
-  color: string;
-  width: string;
+// Simple password scoring function
+function scorePassword(pw: string) {
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+  if (score >= 3) return "strong";
+  if (score === 2) return "medium";
+  return "weak";
 }
 
-const Register: React.FC = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
+const USERNAME_RE = /^[a-zA-Z0-9]{3,30}$/;
 
-  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
-    score: 0,
-    feedback: "",
-    color: "#535353",
-    width: "0%",
-  });
-  const [error, setError] = useState<string>("");
+function isValidUsername(u: string) {
+  return USERNAME_RE.test(u.trim());
+}
 
-  const cardRef = useRef<HTMLDivElement>(null);
-  const usernameWrapperRef = useRef<HTMLDivElement>(null);
-  const passwordWrapperRef = useRef<HTMLDivElement>(null);
-  const confirmPasswordWrapperRef = useRef<HTMLDivElement>(null);
-  const buttonWrapperRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
+export default function Register() {
+  const nav = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [touchedPass, setTouchedPass] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
 
-  const handleParallax = (e: MouseEvent<HTMLDivElement>) => {
-    if (!backgroundRef.current) return;
+  // Parallax Effect Logic (rAF-throttled)
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let raf = 0;
+    const onMouseMove = (e: MouseEvent) => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        const mouseX = (clientX / innerWidth - 0.5) * 18;
+        const mouseY = (clientY / innerHeight - 0.5) * 18;
+        container.style.setProperty("--mouse-x", `${-mouseX}px`);
+        container.style.setProperty("--mouse-y", `${-mouseY}px`);
+      });
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
 
-    const xRatio = e.clientX / window.innerWidth - 0.5;
-    const yRatio = e.clientY / window.innerHeight - 0.5;
+  const strength = useMemo(() => scorePassword(password), [password]);
+  const showStrength = touchedPass && password.length > 0;
 
-    backgroundRef.current.style.setProperty("--bg-x", `${xRatio * 40}px`);
-    backgroundRef.current.style.setProperty("--bg-y", `${yRatio * 40}px`);
-  };
+  function sleep(ms: number) {
+    return new Promise((res) => setTimeout(res, ms));
+  }
 
-  const handleMouseMove = (
-    e: MouseEvent<HTMLDivElement>,
-    ref: React.RefObject<HTMLDivElement>,
-    varPrefix: string
-  ) => {
-    if (!ref.current) return;
+  const USERNAME_RE = /^[A-Za-z0-9]{3,30}$/;
 
-    const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    ref.current.style.setProperty(`--${varPrefix}-x`, `${x}px`);
-    ref.current.style.setProperty(`--${varPrefix}-y`, `${y}px`);
-  };
-
-  const validatePassword = (password: string): PasswordStrength => {
-    let score = 0;
-    let feedback = "";
-    let color = "#535353";
-    let width = "0%";
-
-    if (password.length === 0) {
-      return { score: 0, feedback: "", color: "#535353", width: "0%" };
-    }
-
-    if (password.length >= 8) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[a-z]/.test(password)) score += 1;
-    if (/\d/.test(password)) score += 1;
-    if (/[^A-Za-z0-9]/.test(password)) score += 1;
-
-    switch (score) {
-      case 0:
-      case 1:
-        feedback = "Weak";
-        color = "#ff4444";
-        width = "20%";
-        break;
-      case 2:
-        feedback = "Fair";
-        color = "#ffa500";
-        width = "40%";
-        break;
-      case 3:
-        feedback = "Good";
-        color = "#44FF00";
-        width = "68%";
-        break;
-      case 4:
-      case 5:
-        feedback = "Strong";
-        color = "#44FF00";
-        width = "100%";
-        break;
-    }
-
-    return { score, feedback, color, width };
-  };
-
-  const validateUsername = (username: string): boolean => {
-    return /^[a-zA-Z0-9]{3,20}$/.test(username);
-  };
-
-  const isFormValid = (): boolean => {
-    return (
-      validateUsername(formData.username) &&
-      passwordStrength.score >= 3 &&
-      formData.password === formData.confirmPassword &&
-      formData.password.length >= 8
-    );
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-
-    if (field === "password") {
-      setPasswordStrength(validatePassword(value));
-    }
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
+  async function handleRegisterSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // --- START: DEBUGGING LOGS ---
-    // This will print a report to your developer console.
-    console.clear(); // Clears the console for a clean view
-    console.log("--- Checking Form Validity on Click ---");
-    console.log(
-      `1. Username ('${formData.username}') is valid:`,
-      validateUsername(formData.username)
-    );
-    console.log(
-      `2. Password score is ${passwordStrength.score} (needs >= 3):`,
-      passwordStrength.score >= 3
-    );
-    console.log(
-      `3. Passwords match:`,
-      formData.password === formData.confirmPassword
-    );
-    console.log(
-      `   (Password: '${formData.password}', Confirm: '${formData.confirmPassword}')`
-    );
-    console.log("--- End of Report ---");
-    // --- END: DEBUGGING LOGS ---
+    // Prevent double submits if a previous request is still running
+    if (loading) return;
 
-    if (!isFormValid()) {
-      // This message is a good fallback, but the console will tell us the real reason.
-      setError("Please fix the errors before submitting.");
+    setError(null);
+
+    const uname = username.trim();
+    if (!USERNAME_RE.test(uname)) {
+      setError(
+        "Username must be 3–30 alphanumeric characters (A–Z, a–z, 0–9)."
+      );
+      return;
+    }
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+    if (password !== confirm) {
+      setError("Passwords do not match");
       return;
     }
 
-    setIsLoading(true);
-    setError("");
+    setLoading(true);
+    setStatus("Generating keys...");
 
     try {
-      const { publicBundle } = await cryptoService.generateIdentity();
-      await authAPI.register(
-        formData.username,
-        formData.password,
-        publicBundle
-      );
-      navigate("/login");
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+      // 1) Generate identity (prefer native/libsignal if available)
+      let publicBundle: any = null;
+      let privateMaterial: any = null;
+      if ((window as any).electronCrypto?.nativeEnabled && typeof (window as any).electronCrypto?.generateLSAccount === 'function') {
+        const acc = await (window as any).electronCrypto.generateLSAccount();
+        if ((acc as any)?.error) throw new Error((acc as any).error);
+        // Build server-facing bundle from account info (avoid getPreKeyBundle crash paths)
+        publicBundle = {
+          registrationId: acc.registrationId,
+          identityKeyB64: acc.identityKeyB64,
+          signedPreKey: acc.signedPreKey,
+          ...(Array.isArray(acc.oneTimePreKeys) && acc.oneTimePreKeys.length
+            ? { oneTimePreKey: { id: acc.oneTimePreKeys[0].id ?? 1, pubB64: acc.oneTimePreKeys[0].pubB64 || acc.oneTimePreKeys[0].publicKeyB64 } }
+            : {}),
+        } as any;
+        // Optional prekeys to upload to backend pool
+        try {
+          if (Array.isArray((acc as any).oneTimePreKeys) && (acc as any).oneTimePreKeys.length > 0) {
+            const mapped = (acc as any).oneTimePreKeys.map((k: any) => ({ publicKeyB64: k.pubB64 || k.publicKeyB64 }));
+            try { await window.electronAPI.saveOPKs?.(mapped as any); } catch {}
+            try { await (await import('../utils/api')).keyAPI.topUpPrekeys(mapped); } catch {}
+          }
+        } catch {}
+      } else {
+        // Dev bridge fallback
+        const res = await window.electronCrypto.generateIdentity();
+        publicBundle = res.publicBundle;
+        privateMaterial = res.privateMaterial;
       }
-      setIsLoading(false);
-    }
-  };
 
-  const handleClose = () => window.electronAPI?.closeApp();
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
+      // 2) Unlock & save keys locally
+      setStatus("Unlocking secure store...");
+      await window.electronAPI.unlockDB(password, uname);
+
+      // Save only when dev bridge generated private material
+      if (privateMaterial) {
+        setStatus("Saving keys...");
+        await window.electronAPI.saveKeys(privateMaterial);
+      }
+
+      // 3) Optional: one-time prekeys (dev bridge path)
+      let oneTimePreKeys: Array<{ publicKeyB64: string }> | undefined;
+      if (!publicBundle?.registrationId && typeof window.electronCrypto.generateOneTimePreKeys === "function") {
+        try {
+          setStatus("Preparing prekeys...");
+          oneTimePreKeys = await window.electronCrypto.generateOneTimePreKeys(
+            20
+          );
+          try { await window.electronAPI.saveOPKs(oneTimePreKeys as any); } catch {}
+        } catch {
+          oneTimePreKeys = undefined;
+        }
+      }
+
+      // 4) Register (with 429 retry)
+      const payload: any = {
+        username: uname,
+        password,
+        publicBundle,
+        ...(oneTimePreKeys ? { oneTimePreKeys } : {}),
+      };
+
+      let attempt = 0;
+      const maxAttempts = 3;
+      for (;;) {
+        try {
+          setStatus(
+            attempt
+              ? `Registering (retry ${attempt}/${maxAttempts - 1})...`
+              : "Creating your account..."
+          );
+          await authAPI.register(payload);
+          break; // success
+        } catch (err: any) {
+          const status = err?.response?.status;
+          const data = err?.response?.data;
+
+          // Surface 400s (validation etc.) immediately and stop
+          if (status === 400) {
+            setError(typeof data === "string" ? data : JSON.stringify(data));
+            return;
+          }
+
+          // For 429, back off and retry a couple times
+          if (status === 429 && attempt < maxAttempts - 1) {
+            const delay = 500 * Math.pow(2, attempt); // 500ms, 1s
+            await sleep(delay);
+            attempt++;
+            continue;
+          }
+
+          // Unknown/other errors
+          const msg =
+            data ?? err?.message ?? "Registration failed (unknown error)";
+          setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+          return;
+        }
+      }
+
+      // 5) Success → go to login
+      nav("/login");
+    } finally {
+      // Always clear loading/status
+      setLoading(false);
+      setStatus("");
+    }
+  }
 
   return (
-    <div className="register-container" onMouseMove={handleParallax}>
-      <div className="register-background" ref={backgroundRef}>
-        <div className="background-overlay" />
+    <div className="auth-container" ref={containerRef}>
+      <div className="window-controls-auth">
+        <button
+          className="window-control minimize"
+          onClick={() => window.electronAPI?.minimizeWindow?.()}
+          title="Minimize"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <rect x="2" y="5" width="8" height="2" fill="currentColor" />
+          </svg>
+        </button>
+        <button
+          className="window-control maximize"
+          onClick={() => window.electronAPI?.maximizeWindow?.()}
+          title="Maximize"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <rect x="2" y="2" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
+        </button>
+        <button
+          className="window-control close"
+          onClick={() => window.electronAPI?.closeWindow?.()}
+          title="Close"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
       </div>
-
-      <button className="close-button" onClick={handleClose}>
-        ×
-      </button>
-
-      <div
-        className="register-card"
-        ref={cardRef}
-        onMouseMove={(e) => handleMouseMove(e, cardRef, "mouse")}
-      >
-        {/* Unified Logo System */}
-        <div className="logo-section">
-          <div className="logo-icon">
-            <img src={logoImg} alt="pwnbuffer logo" width="32" height="32" />
-          </div>
-          <h1 className="logo">pwnbuffer.org</h1>
+      <div className="background-layer" />
+      <div className="auth-card register-card">
+        <div className="brand">
+          <img src={logoPng} alt="logo" className="logo-icon" />
+          <h1 className="logo-text">PWNCHAT</h1>
         </div>
 
-        {/* Unified Form System */}
-        <form className="register-form" onSubmit={handleRegister}>
-          {error && (
-            <div
-              className="validation-error"
-              style={{ textAlign: "center", marginBottom: "10px" }}
-            >
-              {error}
-            </div>
-          )}
-
-          {/* Username Input */}
+        <form className="auth-form" onSubmit={handleRegisterSubmit}>
+          {error && <p className="auth-error">{error}</p>}
           <div className="input-group">
-            <div
-              className="input-glow-wrapper"
-              ref={usernameWrapperRef}
-              onMouseMove={(e) =>
-                handleMouseMove(e, usernameWrapperRef, "input-mouse")
-              }
-            >
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <User size={16} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={(e) =>
-                    handleInputChange("username", e.target.value)
-                  }
-                  className={`register-input ${
-                    formData.username && !validateUsername(formData.username)
-                      ? "invalid"
-                      : ""
-                  }`}
-                  required
-                />
-              </div>
-            </div>
-            {formData.username && !validateUsername(formData.username) && (
-              <div className="validation-error">
-                Username must be 3-20 alphanumeric characters
-              </div>
-            )}
-          </div>
-
-          {/* Password Input */}
-          <div className="input-group">
-            <div
-              className="input-glow-wrapper"
-              ref={passwordWrapperRef}
-              onMouseMove={(e) =>
-                handleMouseMove(e, passwordWrapperRef, "input-mouse")
-              }
-            >
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <Lock size={16} />
-                </div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  className="register-input"
-                  required
-                />
-              </div>
+            <label className="input-label">Username</label>
+            <div className="input-wrapper">
+              <FiUser className="input-icon" />
+              <input
+                className="auth-input"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={loading}
+              />
             </div>
           </div>
 
-          {/* Confirm Password Input */}
           <div className="input-group">
-            <div
-              className="input-glow-wrapper"
-              ref={confirmPasswordWrapperRef}
-              onMouseMove={(e) =>
-                handleMouseMove(e, confirmPasswordWrapperRef, "input-mouse")
-              }
-            >
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <Lock size={16} />
-                </div>
-                <input
-                  type="password"
-                  placeholder="Confirm password"
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    handleInputChange("confirmPassword", e.target.value)
-                  }
-                  className={`register-input ${
-                    formData.confirmPassword &&
-                    formData.password !== formData.confirmPassword
-                      ? "invalid"
-                      : ""
-                  }`}
-                  required
-                />
-              </div>
+            <label className="input-label">Password</label>
+            <div className="input-wrapper">
+              <FiLock className="input-icon" />
+              <input
+                type="password"
+                className="auth-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setTouchedPass(true)}
+                disabled={loading}
+              />
             </div>
-            {formData.confirmPassword &&
-              formData.password !== formData.confirmPassword && (
-                <div className="validation-error">Passwords do not match</div>
-              )}
+          </div>
+          <div className="input-group">
+            <label className="input-label">Confirm Password</label>
+            <div className="input-wrapper">
+              <FiLock className="input-icon" />
+              <input
+                type="password"
+                className="auth-input"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                disabled={loading}
+              />
+            </div>
           </div>
 
-          {/* Unified Password Strength System */}
-          {formData.password && (
-            <div className="password-strength-section">
-              <div
-                className="strength-feedback"
-                style={{ color: passwordStrength.color }}
-              >
-                {passwordStrength.feedback}
+          {showStrength && (
+            <div className="strength-section">
+              <div className="strength-header">
+                <span className={`strength-label ${strength}`}>
+                  {strength.charAt(0).toUpperCase() + strength.slice(1)}
+                </span>
+                <span>Password strength</span>
               </div>
               <div className="strength-meter">
-                <div
-                  className="strength-fill"
-                  style={{
-                    width: passwordStrength.width,
-                    backgroundColor: passwordStrength.color,
-                    boxShadow: `0px 0px 28px 2px ${passwordStrength.color}19`,
-                  }}
-                />
+                <div className={`strength-fill ${strength}`} />
               </div>
-              <div className="strength-label">Password strength</div>
             </div>
           )}
 
-          {/* Unified Button System */}
-          <div
-            className="button-glow-wrapper"
-            ref={buttonWrapperRef}
-            onMouseMove={(e) =>
-              handleMouseMove(e, buttonWrapperRef, "button-mouse")
-            }
-          >
-            <button
-              type="submit"
-              className={`register-button ${isLoading ? "loading" : ""} ${
-                !isFormValid() ? "disabled" : ""
-              }`}
-              disabled={isLoading || !isFormValid()}
-            >
-              {isLoading ? "" : "Register"}
-            </button>
-          </div>
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? status || "Please wait..." : "Sign Up"}
+          </button>
         </form>
 
-        {/* Unified Navigation System */}
-        <div className="login-section">
-          <p className="login-text">Already have an account?</p>
+        <div className="link-section">
+          <p className="link-text">Already have an account?</p>
           <button
-            type="button"
-            className="login-button-register"
-            onClick={handleLoginClick}
+            className="link-button"
+            onClick={() => nav("/login")}
+            disabled={loading}
           >
             Login
           </button>
@@ -372,6 +320,4 @@ const Register: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Register;
+}

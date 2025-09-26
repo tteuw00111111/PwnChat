@@ -4,13 +4,17 @@ export const validateAuth = [
   body("username")
     .isLength({ min: 3, max: 30 })
     .isAlphanumeric()
-    .withMessage("Username must be 3-30 alphanumeric characters"),
+    .withMessage("Username must be 3-30 alphanumeric characters")
+    .trim()
+    .escape(),
   body("password")
     .isLength({ min: 8, max: 128 })
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
     .withMessage(
       "Password must contain uppercase, lowercase, number, and special character"
-    ),
+    )
+    .trim()
+    .escape(),
 
   (req, res, next) => {
     const errors = validationResult(req);
