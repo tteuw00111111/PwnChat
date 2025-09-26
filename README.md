@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![PwnChat Logo](./conceptual_arts/Frame%201(3).png)
+![PwnChat Logo](<./conceptual_arts/Frame%201(3).png>)
 
 **A production-ready, cross-platform desktop messaging application with Signal Protocol encryption**
 
@@ -13,7 +13,7 @@
 [![React](https://img.shields.io/badge/React-19.1.1-blue.svg)](https://reactjs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://postgresql.org/)
 
-*Combining modern web technologies with military-grade cryptography for private communication*
+_Combining modern web technologies with military-grade cryptography for private communication_
 
 [🚀 Features](#-features) • [🏗️ Architecture](#️-architecture) • [🔧 Installation](#-installation) • [📚 Documentation](#-documentation)
 
@@ -122,6 +122,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 ## 💻 Tech Stack
 
 ### Frontend Technologies
+
 - **⚛️ React 19.1.1**: Modern UI library with hooks and concurrent features
 - **📘 TypeScript 5.4.0**: Type-safe development with advanced type system
 - **🎨 Tailwind CSS**: Utility-first CSS framework for rapid styling
@@ -130,6 +131,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - **🔌 Socket.IO Client**: Real-time bidirectional communication
 
 ### Backend Technologies
+
 - **🚀 Node.js 20+**: High-performance JavaScript runtime
 - **🌐 Express.js 4.18**: Minimal and flexible web framework
 - **🔌 Socket.IO**: Real-time engine with WebSocket fallbacks
@@ -138,6 +140,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - **✅ Input Validation**: Express-validator with comprehensive rules
 
 ### Desktop & Native
+
 - **⚡ Electron 30.5.1**: Cross-platform desktop framework
 - **🔧 Node-GYP**: Native addon build system
 - **💾 SQLCipher**: Encrypted SQLite database for local storage
@@ -145,12 +148,14 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - **🏗️ ESBuild**: Fast bundler for Electron main process
 
 ### Database & Storage
+
 - **🐘 PostgreSQL 16**: Advanced relational database
 - **🔐 SQLCipher**: Encrypted local storage
 - **🗄️ Node-postgres (pg)**: PostgreSQL client for Node.js
 - **💾 Better-SQLite3**: High-performance SQLite bindings
 
 ### Development & Build Tools
+
 - **⚡ Vite 5.4**: Next-generation build tool
 - **📦 Electron Builder**: Automated installer generation
 - **🔄 Concurrently**: Parallel script execution
@@ -158,6 +163,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - **📝 ESLint**: Code linting and quality assurance
 
 ### Cryptography & Security
+
 - **🔐 Signal Protocol**: Industry-standard E2E encryption
 - **🔑 libsignal-protocol-c**: Native cryptographic implementation
 - **🛡️ Argon2**: Memory-hard password hashing
@@ -169,6 +175,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 ## ✨ Features
 
 ### 🔐 Security & Privacy
+
 - [x] **End-to-End Encryption** - Signal Protocol implementation
 - [x] **Perfect Forward Secrecy** - Automatic key rotation
 - [x] **Message Authentication** - Cryptographic integrity verification
@@ -177,6 +184,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - [x] **Session Management** - Secure session establishment and recovery
 
 ### 💬 Messaging Features
+
 - [x] **Real-time Messaging** - Instant message delivery via WebSockets
 - [x] **Message History** - Persistent conversation history
 - [x] **Delivery Status** - Message delivered confirmations
@@ -185,6 +193,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - [x] **Message Pagination** - Efficient loading of conversation history
 
 ### 👤 User Experience
+
 - [x] **Modern UI/UX** - Clean, intuitive interface design
 - [x] **Dark Mode** - Eye-friendly dark theme
 - [x] **Cross-Platform** - Windows, macOS, and Linux support
@@ -193,6 +202,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - [x] **Status Indicators** - Online/offline user status
 
 ### 🛠️ Technical Features
+
 - [x] **Production-Ready Backend** - Enterprise-grade API server
 - [x] **Database Migrations** - Version-controlled schema changes
 - [x] **Error Handling** - Comprehensive error recovery
@@ -201,6 +211,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 - [x] **Logging & Monitoring** - Comprehensive application logging
 
 ### 🚧 Roadmap
+
 - [ ] **Group Messaging** - Multi-user encrypted conversations
 - [ ] **File Sharing** - Encrypted file transfer capabilities
 - [ ] **Voice Messages** - Audio message support
@@ -225,6 +236,7 @@ PwnChat follows a modern client-server architecture with strong separation of co
 ### Platform-Specific Requirements
 
 #### Linux (Ubuntu/Debian)
+
 ```bash
 sudo apt-get update && sudo apt-get install -y \
   libsignal-protocol-c-dev \
@@ -236,6 +248,7 @@ sudo apt-get update && sudo apt-get install -y \
 ```
 
 #### macOS
+
 ```bash
 # Using Homebrew
 brew install pkg-config openssl postgresql@16
@@ -243,6 +256,7 @@ xcode-select --install
 ```
 
 #### Windows
+
 ```powershell
 # Using Chocolatey
 choco install nodejs python3 visualstudio2022buildtools postgresql16
@@ -252,12 +266,14 @@ choco install nodejs python3 visualstudio2022buildtools postgresql16
 ### Quick Start
 
 1. **Clone the Repository**
+
    ```bash
-   git clone https://github.com/brucewayne/pwnchat-project.git
+   git clone https://github.com/tteuw00111111/pwnchat-project.git
    cd pwnchat-project
    ```
 
 2. **Install Dependencies**
+
    ```bash
    # Install frontend dependencies
    npm install
@@ -267,6 +283,7 @@ choco install nodejs python3 visualstudio2022buildtools postgresql16
    ```
 
 3. **Set Up Database**
+
    ```bash
    # Start PostgreSQL service
    sudo systemctl start postgresql  # Linux
@@ -282,6 +299,7 @@ choco install nodejs python3 visualstudio2022buildtools postgresql16
    ```
 
 4. **Configure Environment**
+
    ```bash
    # Backend configuration
    cd backend
@@ -294,12 +312,14 @@ choco install nodejs python3 visualstudio2022buildtools postgresql16
    ```
 
 5. **Build Native Dependencies**
+
    ```bash
    # Build the libsignal addon
    npm run build:native
    ```
 
 6. **Start Development**
+
    ```bash
    # Terminal 1: Start backend server
    cd backend && npm run dev
@@ -323,17 +343,20 @@ npm run dist  # (Coming soon with electron-builder setup)
 ## 📚 Documentation
 
 ### Core Documentation
+
 - [🏗️ **Architecture Guide**](./docs/ARCHITECTURE.md) - System design and component interaction
 - [🔐 **Security Implementation**](./docs/SECURITY.md) - Detailed cryptographic analysis
 - [🚀 **Deployment Guide**](./docs/DEPLOYMENT.md) - Production deployment instructions
 - [💻 **Development Setup**](./docs/DEVELOPMENT.md) - Developer environment configuration
 
 ### API Documentation
+
 - [📡 **REST API Reference**](./docs/API.md) - Complete endpoint documentation
 - [🔌 **WebSocket Events**](./docs/WEBSOCKETS.md) - Real-time communication protocol
 - [💾 **Database Schema**](./docs/database.md) - Database structure and migrations
 
 ### Additional Resources
+
 - [🔧 **Troubleshooting**](./docs/TROUBLESHOOTING.md) - Common issues and solutions
 - [📈 **Performance Guide**](./docs/PERFORMANCE.md) - Optimization recommendations
 - [🧪 **Testing Guide**](./docs/TESTING.md) - Testing strategies and frameworks
@@ -388,6 +411,7 @@ We welcome contributions from the community! Please read our contributing guidel
 ### Threat Model
 
 PwnChat is designed to protect against:
+
 - **Server Compromise** - E2E encryption ensures server cannot read messages
 - **Network Interception** - TLS + Signal Protocol double encryption
 - **Client Compromise** - Forward secrecy limits damage from key exposure
@@ -413,6 +437,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Open Source Acknowledgments
 
 PwnChat is built upon many excellent open source projects:
+
 - [Signal Protocol](https://signal.org/docs/) - Cryptographic protocol design
 - [Electron](https://electronjs.org/) - Cross-platform desktop framework
 - [React](https://reactjs.org/) - User interface library
@@ -423,7 +448,7 @@ PwnChat is built upon many excellent open source projects:
 
 ## 👨‍💻 About the Developer
 
-Built with ❤️ by **Bruce Wayne** as a portfolio project demonstrating:
+Built with ❤️ by **tteuw** as a portfolio project demonstrating:
 
 - **Full-Stack Development** - Modern web technologies and APIs
 - **Security Engineering** - Cryptographic protocol implementation
@@ -433,10 +458,9 @@ Built with ❤️ by **Bruce Wayne** as a portfolio project demonstrating:
 
 ### Connect
 
-- 💼 **LinkedIn**: [linkedin.com/in/bruce-wayne](https://linkedin.com/in/bruce-wayne)
-- 🐙 **GitHub**: [github.com/brucewayne](https://github.com/brucewayne)
-- 📧 **Email**: bruce@wayne-enterprises.com
-- 🌐 **Portfolio**: [bruce-wayne.dev](https://bruce-wayne.dev)
+- 🐙 **GitHub**: [github.com/brucewayne](https://github.com/tteuw00111111/)
+- 📧 **Email**: tteuw021@proton.me
+- 🌐 **Portfolio**: [tteuw0x.dev](https://tteuw0x.dev)
 
 ---
 
