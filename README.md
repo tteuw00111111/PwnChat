@@ -458,7 +458,7 @@ Built with ❤️ by **tteuw** as a portfolio project demonstrating:
 
 ### Connect
 
-- 🐙 **GitHub**: [github.com/brucewayne](https://github.com/tteuw00111111/)
+- 🐙 **GitHub**: [github.com/tteuw00111111](https://github.com/tteuw00111111/)
 - 📧 **Email**: tteuw021@proton.me
 - 🌐 **Portfolio**: [tteuw0x.dev](https://tteuw0x.dev)
 
