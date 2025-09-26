@@ -268,7 +268,7 @@ choco install nodejs python3 visualstudio2022buildtools postgresql16
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/tteuw00111111/pwnchat-project.git
+   git clone https://github.com/tteuw00111111/PwnChat.git
    cd pwnchat-project
    ```
 
