@@ -5,8 +5,9 @@ import { authAPI } from "../utils/api";
 import { useEffect, useMemo, useRef } from "react";
 import "../styles/Register.css";
 import { FiUser, FiLock } from "react-icons/fi";
-import logoPng from "../assets/pwn_logo.png";
+import { AuthHeader } from "../components/auth/AuthHeader";
 import { cryptoService } from "../lib/cryptoService";
+import { formatAuthError, type ErrorMessage, getValidationRules } from "../utils/errorMessages";
 
 // Simple password scoring function
 function scorePassword(pw: string) {
@@ -21,10 +22,13 @@ function scorePassword(pw: string) {
   return "weak";
 }
 
-const USERNAME_RE = /^[a-zA-Z0-9]{3,30}$/;
+const validationRules = getValidationRules();
 
 function isValidUsername(u: string) {
-  return USERNAME_RE.test(u.trim());
+  const trimmed = u.trim();
+  return trimmed.length >= validationRules.username.minLength &&
+         trimmed.length <= validationRules.username.maxLength &&
+         validationRules.username.pattern.test(trimmed);
 }
 
 export default function Register() {
@@ -34,7 +38,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [touchedPass, setTouchedPass] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorMessage | null>(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
 
@@ -80,18 +84,25 @@ export default function Register() {
     setError(null);
 
     const uname = username.trim();
-    if (!USERNAME_RE.test(uname)) {
-      setError(
-        "Username must be 3–30 alphanumeric characters (A–Z, a–z, 0–9)."
-      );
+    if (!isValidUsername(uname)) {
+      setError({
+        title: "Invalid Username",
+        message: `Username must be ${validationRules.username.minLength}-${validationRules.username.maxLength} characters using only letters (A-Z, a-z) and numbers (0-9). No spaces or special characters allowed.`
+      });
       return;
     }
     if (!password) {
-      setError("Password is required");
+      setError({
+        title: "Password Required",
+        message: "Please enter a password to continue."
+      });
       return;
     }
     if (password !== confirm) {
-      setError("Passwords do not match");
+      setError({
+        title: "Passwords Don't Match",
+        message: "The passwords you entered don't match. Please make sure both password fields are identical."
+      });
       return;
     }
 
@@ -178,7 +189,7 @@ export default function Register() {
 
           // Surface 400s (validation etc.) immediately and stop
           if (status === 400) {
-            setError(typeof data === "string" ? data : JSON.stringify(data));
+            setError(formatAuthError(data));
             return;
           }
 
@@ -191,9 +202,7 @@ export default function Register() {
           }
 
           // Unknown/other errors
-          const msg =
-            data ?? err?.message ?? "Registration failed (unknown error)";
-          setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+          setError(formatAuthError(err));
           return;
         }
       }
@@ -241,12 +250,18 @@ export default function Register() {
       <div className="background-layer" />
       <div className="auth-card register-card">
         <div className="brand">
-          <img src={logoPng} alt="logo" className="logo-icon" />
-          <h1 className="logo-text">PWNCHAT</h1>
+          <AuthHeader />
         </div>
 
         <form className="auth-form" onSubmit={handleRegisterSubmit}>
-          {error && <p className="auth-error">{error}</p>}
+          {error && (
+            <div className="auth-error">
+              <div className="auth-error-content">
+                <div className="auth-error-title">{error.title}</div>
+                <div className="auth-error-message">{error.message}</div>
+              </div>
+            </div>
+          )}
           <div className="input-group">
             <label className="input-label">Username</label>
             <div className="input-wrapper">

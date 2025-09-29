@@ -193,7 +193,9 @@ export const cryptoService = {
     // Dev bridge warm-up (ratchet init)
     const bundle = await getRecipientBundle(username);
     const s = await getSession(userId, bundle);
-    try { console.log(`[CryptoService] Session primed: id=${s.sessionId.slice(0,8)}, key=${s.sharedAesKeyB64.slice(0,8)}...`); } catch {}
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[CryptoService] Session primed for ${username}`);
+    }
     try {
       const rs = await window.electronAPI.getRatchet?.(userId);
       const roleA = computeRoleAFromKeys(myPrivateMaterial, bundle);

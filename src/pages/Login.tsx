@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { FiUser, FiLock } from "react-icons/fi";
-import logoPng from "../assets/pwn_logo.png";
+import { AuthHeader } from "../components/auth/AuthHeader";
 import { ACCESS_TOKEN_KEY, authAPI } from "../utils/api";
 import { jwtDecode } from "jwt-decode";
+import { formatAuthError, type ErrorMessage } from "../utils/errorMessages";
 
 export default function Login() {
   const nav = useNavigate();
@@ -14,7 +15,7 @@ export default function Login() {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorMessage | null>(null);
 
   // Parallax Effect Logic (rAF-throttled for perf)
   useEffect(() => {
@@ -67,8 +68,7 @@ export default function Login() {
       // 4) Go to chat
       nav("/chat");
     } catch (err: any) {
-      const msg = err?.response?.data ?? err?.message ?? "Login failed";
-      setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+      setError(formatAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -108,11 +108,17 @@ export default function Login() {
       <div className="background-layer" />
       <div className="auth-card">
         <div className="brand">
-          <img src={logoPng} alt="logo" className="logo-icon" />
-          <h1 className="logo-text">PWNCHAT</h1>
+          <AuthHeader />
         </div>
         <form className="auth-form" onSubmit={handleLoginSubmit}>
-          {error && <p className="auth-error">{String(error)}</p>}
+          {error && (
+            <div className="auth-error">
+              <div className="auth-error-content">
+                <div className="auth-error-title">{error.title}</div>
+                <div className="auth-error-message">{error.message}</div>
+              </div>
+            </div>
+          )}
           <div className="input-group">
             <label className="input-label">Username</label>
             <div className="input-wrapper">

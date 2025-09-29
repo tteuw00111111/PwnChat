@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![PwnChat Logo](<./conceptual_arts/Frame%201(3).png>)
+![PwnChat Logo](./conceptual_arts/last_login_design.png)
 
 **A production-ready, cross-platform desktop messaging application with Signal Protocol encryption**
 
@@ -360,38 +360,6 @@ npm run dist  # (Coming soon with electron-builder setup)
 - [🔧 **Troubleshooting**](./docs/TROUBLESHOOTING.md) - Common issues and solutions
 - [📈 **Performance Guide**](./docs/PERFORMANCE.md) - Optimization recommendations
 - [🧪 **Testing Guide**](./docs/TESTING.md) - Testing strategies and frameworks
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Please read our contributing guidelines to get started.
-
-### Development Process
-
-1. **Fork the Repository**
-2. **Create a Feature Branch** (`git checkout -b feature/amazing-feature`)
-3. **Make Your Changes** with proper testing
-4. **Run Tests** (`npm test`)
-5. **Commit Changes** (`git commit -m 'Add amazing feature'`)
-6. **Push to Branch** (`git push origin feature/amazing-feature`)
-7. **Open a Pull Request**
-
-### Code Style
-
-- **TypeScript/JavaScript**: ESLint + Prettier configuration
-- **React**: Functional components with hooks
-- **CSS**: Tailwind utility classes
-- **Commits**: Conventional commit format
-
-### Areas for Contribution
-
-- 🐛 **Bug Fixes** - Help identify and resolve issues
-- ✨ **New Features** - Implement items from the roadmap
-- 📚 **Documentation** - Improve guides and API documentation
-- 🧪 **Testing** - Add test coverage and improve test quality
-- 🎨 **UI/UX** - Enhance user interface and experience
-- 🔐 **Security** - Security auditing and improvements
 
 ---
 

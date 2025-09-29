@@ -75,24 +75,39 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
   margin-bottom: 36px;
 }
 
-.logo-icon {
-  width: 40px;
-  height: 40px;
+/* Logo Container - Using Inter Font */
+.logo-container {
+  font-family: var(--font-sans); /* Inter font from CSS variables */
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
-.logo-text {
-  font-size: 36px;
-  font-weight: 800;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  /* Reverted to a solid color for a cleaner look */
-  color: var(--text-main);
+.logo-container:hover {
+  transform: scale(1.05);
 }
+
+/* Glow effects for logo elements */
+.logo-main-text {
+  font-family: var(--font-sans) !important;
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(255, 255, 255, 0.6),
+    0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.logo-icon {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8))
+          drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+}
+
+.logo-tagline {
+  font-family: var(--font-sans) !important;
+  opacity: 0.8;
+}
+
 
 /* --- Form Styles --- */
 .auth-form {
@@ -117,6 +132,16 @@
   left: 16px;
   transform: translateY(-50%);
   color: var(--text-muted);
+  animation: icon-pulse 3s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+  }
 }
 
 .auth-input {
@@ -158,6 +183,86 @@
   transform: scale(0.99);
 }
 
+/* --- Error Message Styling --- */
+.auth-error {
+  padding: 12px 16px;
+  margin: 0 0 16px 0;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #fca5a5;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+  animation: error-slide-in 0.3s ease-out;
+}
+
+.auth-error::before {
+  content: "⚠";
+  color: #ef4444;
+  font-size: 16px;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 1px;
+  text-shadow: 0 0 4px #ef4444;
+}
+
+.auth-error-content {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.auth-error-title {
+  font-weight: 600;
+  color: #ef4444;
+  margin-bottom: 2px;
+  text-shadow: 0 0 2px #ef4444;
+}
+
+.auth-error-message {
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+@keyframes error-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success message styling */
+.auth-success {
+  padding: 12px 16px;
+  margin: 0 0 16px 0;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 12px;
+  color: #86efac;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+  animation: error-slide-in 0.3s ease-out;
+}
+
+.auth-success::before {
+  content: "✓";
+  color: #22c55e;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 4px #22c55e;
+}
+
 .link-section {
   text-align: center;
   margin-top: 24px;
@@ -195,18 +300,37 @@
     border-radius: 20px;
   }
 
-  .logo-text {
-    font-size: 28px;
+  .auth-error {
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 14px;
   }
+
+  .auth-error-title {
+    font-size: 13px;
+  }
+
+  .auth-error-message {
+    font-size: 12px;
+  }
+
 
   .brand {
     margin-bottom: 28px;
-    gap: 12px;
   }
 
-  .logo-icon {
-    width: 36px;
-    height: 36px;
+  .logo-container {
+    min-width: 160px !important;
+    min-height: 44px !important;
+    transform: scale(0.87);
+  }
+
+  .logo-main-text {
+    font-size: 35px !important;
+  }
+
+  .logo-tagline {
+    font-size: 9px !important;
   }
 }
 
@@ -223,19 +347,23 @@
     border-radius: 16px;
   }
 
-  .logo-text {
-    font-size: 24px;
-    letter-spacing: 1px;
-  }
 
   .brand {
     margin-bottom: 24px;
-    gap: 10px;
   }
 
-  .logo-icon {
-    width: 32px;
-    height: 32px;
+  .logo-container {
+    min-width: 140px !important;
+    min-height: 38px !important;
+    transform: scale(0.76);
+  }
+
+  .logo-main-text {
+    font-size: 30px !important;
+  }
+
+  .logo-tagline {
+    font-size: 8px !important;
   }
 
   .auth-form {

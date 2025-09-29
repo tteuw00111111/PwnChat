@@ -46,7 +46,7 @@ export function UserProfilePanel({ onClose }: UserProfilePanelProps) {
           }
         }
       } catch (error) {
-        console.error('Failed to decode user token:', error);
+        console.error('Failed to decode user token');
       }
     };
 

@@ -139,10 +139,11 @@ export async function ratchetEncrypt(
   counter: number,
   plaintext: string
 ): Promise<{ ciphertext: string; nextCKB64: string; header: { n: number } }> {
-  console.log(`[${profile}] ENCRYPT call: ck=${chainKeyB64.slice(0,10)} n=${counter}`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[${profile}] ENCRYPT call: counter=${counter}`);
+  }
   let ck = Buffer.from(chainKeyB64, 'base64');
   const mk = kdfHmac(ck, 'msg');
-  console.log(`[${profile}] ENCRYPT derived mk: ${mk.toString('base64').slice(0,10)}`);
   const nextCK = kdfHmac(ck, 'chain');
   const { ivB64, ctB64, tagB64 } = aes256gcmEncryptRaw(mk.subarray(0, 32), Buffer.from(plaintext, 'utf8'));
   return { ciphertext: `${ivB64}.${tagB64}.${ctB64}`, nextCKB64: nextCK.toString('base64'), header: { n: counter } };
@@ -155,7 +156,9 @@ export async function ratchetDecrypt(
   msgCounter: number,
   ciphertext: string
 ): Promise<{ plaintext: string; nextCKB64: string }> {
-  console.log(`[${profile}] DECRYPT call: ck=${chainKeyB64.slice(0,10)} current_n=${currentCounter} msg_n=${msgCounter}`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[${profile}] DECRYPT call: current_n=${currentCounter} msg_n=${msgCounter}`);
+  }
   let ck = Buffer.from(chainKeyB64, 'base64');
   let n = currentCounter;
   // Advance chain until we reach message counter
@@ -164,7 +167,6 @@ export async function ratchetDecrypt(
     n++;
   }
   const mk = kdfHmac(ck, 'msg');
-  console.log(`[${profile}] DECRYPT derived mk: ${mk.toString('base64').slice(0,10)}`);
   const nextCK = kdfHmac(ck, 'chain');
   const parts = ciphertext.split('.');
   if (parts.length !== 3) throw new Error('Invalid ciphertext format');
@@ -415,7 +417,9 @@ export async function establishSession(
   const key = hkdfSha256(ikm, Buffer.alloc(0), Buffer.from('pwnchat-x3dh-v2'), 32);
   const sessionId = crypto.createHash('sha256').update(key).digest('hex');
   sessions.set(sessionId, key);
-  try { console.log(`[bridge] establishSession: parts=x3dh/ik-ik+spk-terms:${spkIncluded ? 'yes' : 'no'}, sessionId=${sessionId.slice(0,8)}, key=${key.toString('base64').slice(0,8)}...`); } catch {}
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[bridge] establishSession: x3dh completed, spk-terms:${spkIncluded ? 'yes' : 'no'}`);
+  }
   return { success: true, sessionId, sharedAesKeyB64: b64(key) };
 }
 
@@ -567,5 +571,7 @@ export async function loadSessionKey(profile: string, sessionId: string, sharedA
   const sessions = getSessionsForProfile(profile);
   const key = fromB64(sharedAesKeyB64);
   sessions.set(sessionId, key);
-  try { console.log(`[bridge] loadSessionKey: profile=${profile}, sessionId=${String(sessionId).slice(0,8)}, key=${sharedAesKeyB64.slice(0,8)}...`); } catch {}
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[bridge] loadSessionKey: profile=${profile}`);
+  }
 }

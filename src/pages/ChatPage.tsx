@@ -36,7 +36,7 @@ const getMyId = (): string | null => {
     const decoded: { userId: string } = jwtDecode(token);
     return decoded.userId;
   } catch (e) {
-    console.error("Failed to decode token:", e);
+    console.error("Failed to decode authentication token");
     return null;
   }
 };
@@ -59,7 +59,9 @@ export default function ChatPage() {
   useEffect(() => {
     const newUserId = myUserId;
     if (currentUserId && newUserId && currentUserId !== newUserId) {
-      console.log("User changed, clearing all message state");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("User changed, clearing all message state");
+      }
       setMessages({});
       setConversations([]);
       setSelectedId(null);
@@ -141,7 +143,9 @@ export default function ChatPage() {
 
         const handlePrivateMessage = async ({ senderId, senderUsername, ciphertext, id, created_at, handshake, header }: PrivateMessagePayload) => {
           try {
-            console.log("incoming", { senderId, senderUsername, ciphertext });
+            if (process.env.NODE_ENV === 'development') {
+              console.log("incoming message from", senderUsername);
+            }
 
             let ensuredConversation: { id: string; name: string; username: string } | undefined;
             try {
@@ -312,23 +316,31 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!isReady || !selectedId) {
-      console.log("Message Fetching Effect: No selectedId, returning.");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Message Fetching Effect: No selectedId, returning.");
+      }
       return;
     }
 
-    console.log(`Message Fetching Effect: selectedId changed to ${selectedId}. Fetching messages...`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Message Fetching Effect: selectedId changed to ${selectedId}. Fetching messages...`);
+    }
 
     const fetchMessages = async () => {
       try {
         setLoading(true);
-        console.log(`Fetching messages for conversation: ${selectedId}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Fetching messages for conversation: ${selectedId}`);
+        }
 
         let localMessages: Message[] = [];
         let decryptedMessages: Message[] = [];
 
         try {
           localMessages = await localMessageService.getConversationHistory(selectedId, MESSAGES_PER_PAGE, messageOffset);
-          console.log(`Found ${localMessages.length} local messages`);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`Found ${localMessages.length} local messages`);
+          }
           decryptedMessages = localMessages;
         } catch (error) {
           console.warn("Failed to fetch local messages:", error);
@@ -336,9 +348,13 @@ export default function ChatPage() {
 
         if (localMessages.length < 5 && messageOffset === 0) {
           try {
-            console.log("Fetching additional messages from remote API...");
+            if (process.env.NODE_ENV === 'development') {
+              console.log("Fetching additional messages from remote API...");
+            }
             const encryptedMessages = await messageAPI.getMessages(selectedId, MESSAGES_PER_PAGE, 0);
-            console.log(`messageAPI.getMessages returned: ${encryptedMessages.length} messages`);
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`messageAPI.getMessages returned: ${encryptedMessages.length} messages`);
+            }
 
             const remoteMessages: Message[] = [];
             for (const msg of encryptedMessages) {

@@ -55,7 +55,7 @@ export function HamburgerMenu({ isOpen, onClose, onSettingsClick }: HamburgerMen
         if (savedProfilePic) setProfilePicUrl(savedProfilePic);
       }
     } catch (error) {
-      console.error('Failed to decode user token:', error);
+      console.error('Failed to decode user token');
     }
   }, []);
 

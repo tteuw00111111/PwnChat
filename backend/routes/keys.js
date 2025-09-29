@@ -65,7 +65,7 @@ router.post("/bundle", authenticateToken, async (req, res) => {
 
     res.status(200).json({ message: "Bundle uploaded successfully" });
   } catch (err) {
-    console.error(`Failed to upload key bundle for user ${req.user.userId}:`, err);
+    console.error('Failed to upload key bundle:', err.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

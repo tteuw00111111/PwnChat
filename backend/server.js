@@ -103,7 +103,9 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   const userId = socket.user.userId;
-  console.log(`✅ User connected: ${socket.id}, UserID: ${userId}`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`✅ User connected: ${socket.id}`);
+  }
 
   let set = userSocketMap.get(userId);
   if (!set) {
@@ -130,7 +132,9 @@ io.on("connection", (socket) => {
       s.delete(socket.id);
       if (s.size === 0) userSocketMap.delete(userId);
     }
-    console.log(`❌ User disconnected: ${socket.id}, UserID: ${userId}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`❌ User disconnected: ${socket.id}`);
+    }
   });
 });
 
